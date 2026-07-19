@@ -13,13 +13,12 @@
   <link rel="icon" type="image/jpeg" href="Real Images/logo.JPG">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-  <style>
-    .carousel-dots, .reviews-dots-row { display: none; }
-  </style>
 </head>
 <body>
+  <a class="skip-to-content" href="#main">Skip to content</a>
   <!-- Navigation -->
   <nav class="nav" id="mainNav">
+    <div class="scroll-progress" id="scrollProgress"></div>
     <a class="nav-logo" href="#top">
       <img src="Real Images/logo.JPG" alt="Henna by Neena" class="nav-logo-img">
       <span class="nav-logo-text">Henna by Neena</span>
@@ -35,7 +34,7 @@
   <!-- Hero -->
   <header class="hero" id="top">
     <div class="hero-bg">
-      <img src="Real Images/stock hero image.jpg" alt="Henna artist at work">
+      <img src="Real Images/stock hero image.jpg" alt="Henna artist at work" fetchpriority="high" loading="eager">
       <div aria-hidden="true"></div>
     </div>
     <div class="hero-content">
@@ -50,6 +49,9 @@
         <span class="material-symbols-outlined">palette</span>
         <span>25+ Years · 500+ Brides · 4.9 Rating</span>
       </div>
+    </div>
+    <div class="scroll-indicator" aria-hidden="true">
+      <span class="material-symbols-outlined">keyboard_arrow_down</span>
     </div>
   </header>
 
