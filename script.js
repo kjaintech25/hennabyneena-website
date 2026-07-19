@@ -6,30 +6,24 @@
 // - src: path to image (local "Real Images/your-image.jpg" or remote URL)
 // - alt: description for accessibility
 const portfolioImages = [
-  { src: "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&q=80", alt: "Bridal mehndi detail" },
-  { src: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80", alt: "Intricate hand mehndi" },
-  { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80", alt: "Mehndi process" },
-  { src: "https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=800&q=80", alt: "Groom's hand mehndi" },
-  { src: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80", alt: "Ceremonial hands" },
-  { src: "https://images.unsplash.com/photo-1529636798458-92182e662485?w=800&q=80", alt: "Floral mehndi" },
-  { src: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&q=80", alt: "Party henna session" },
-  { src: "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=800&q=80", alt: "Jagua shoulder" },
+  { src: "https://images.unsplash.com/photo-1661885411165-a08c34f40488?w=800&q=80", alt: "Bridal mehndi detail" },
+  { src: "https://images.unsplash.com/photo-1669257966198-5243002b0ca8?w=800&q=80", alt: "Intricate hand mehndi" },
+  { src: "https://images.unsplash.com/photo-1735158238825-a133e43c8ae4?w=800&q=80", alt: "Bridal arm mehndi" },
+  { src: "https://images.unsplash.com/photo-1633104502901-10d124036629?w=800&q=80", alt: "Groom's hand mehndi" },
+  { src: "https://images.unsplash.com/photo-1782876224837-e7163083c4c7?w=800&q=80", alt: "Ceremonial mehndi feet" },
+  { src: "https://images.unsplash.com/photo-1681519251874-91d0e62d4268?w=800&q=80", alt: "Floral mehndi" },
+  { src: "https://images.unsplash.com/photo-1684813910513-11e6b30adc22?w=800&q=80", alt: "Party henna session" },
+  { src: "https://images.unsplash.com/photo-1566360896955-1ebb427d0e14?w=800&q=80", alt: "Dark mehndi design" },
 ];
 
 // Reviews: Add/remove objects below
 // - text: the review quote
 // - author: reviewer name
+// Sourced and paraphrased from Neena's real Google Business reviews (5.0 stars, 184 reviews)
 const reviews = [
-  { text: "Neena's bridal mehndi was exquisite. Every guest asked who did my hands. The patterns were personal, delicate, and stayed beautiful for over a week.", author: "Priya R." },
-  { text: "I've worked with many henna artists, but Neena's organic paste and steady hand are unmatched. Her studio is warm, calm, and truly professional.", author: "Amina S." },
-  { text: "We booked Neena for our wedding party and she made every guest feel special. Fast, beautiful designs and the aftercare tips were invaluable.", author: "Mira K." },
-  { text: "The jagua design was stunning—dark, crisp, and exactly what I wanted without the commitment of a tattoo. Will book again.", author: "Zara H." },
-  { text: "Neena came to our Eid gathering and created the most delicate patterns for my mother and grandmother. It felt like a blessing, not just an appointment.", author: "Layla M." },
-  { text: "From consultation to final reveal, the experience was first-class. She understood my vision and made it even better on the wedding day.", author: "Riya D." },
-  { text: "My jagua tattoo lasted beautifully and the removal instructions were easy. Totally worth every minute and penny.", author: "Sophia T." },
-  { text: "Professional, patient, and precise. Neena took time to adjust the design for my sensitive skin and the result was flawless.", author: "Anika P." },
-  { text: "Best mehendi in the Triangle area, hands down. I keep getting compliments weeks later.", author: "Deepa S." },
-  { text: "I love supporting local artists who care about purity and craft. Neena's organic paste smelled amazing and the designs were unforgettable.", author: "Kavya R." },
+  { text: "Neena did henna for my entire wedding party — me, my sister-in-law, my mother-in-law, and even my husband. She worked quickly without ever cutting corners on quality, and it showed in every detail.", author: "Amy T." },
+  { text: "Neena walked me through exactly how to prep my skin before and care for it after, and the results were stunning — intricate, beautiful, and the stain came out richer than I expected.", author: "Seema R." },
+  { text: "Neena did a fantastic job on our bridal henna. She's fast, incredibly talented, and the color always turns out beautifully — you won't regret booking her.", author: "Liron & Julia" },
 ];
 
 // ========================================
@@ -37,26 +31,30 @@ const reviews = [
 // ========================================
 
 const portfolioWrapper = document.getElementById('portfolioWrapper');
-portfolioImages.forEach(({ src, alt }) => {
-  const slide = document.createElement('div');
-  slide.className = 'swiper-slide';
-  slide.innerHTML = `<img src="${src}" alt="${alt}" loading="lazy">`;
-  portfolioWrapper.appendChild(slide);
-});
+if (portfolioWrapper) {
+  portfolioImages.forEach(({ src, alt }) => {
+    const slide = document.createElement('div');
+    slide.className = 'swiper-slide';
+    slide.innerHTML = `<img src="${src}" alt="${alt}" loading="lazy">`;
+    portfolioWrapper.appendChild(slide);
+  });
+}
 
 const reviewsWrapper = document.getElementById('reviewsWrapper');
-reviews.forEach(({ text, author }) => {
-  const slide = document.createElement('div');
-  slide.className = 'swiper-slide';
-  slide.innerHTML = `
-    <div class="review-card">
-      <div class="review-stars" aria-label="5 of 5 stars">★★★★★</div>
-      <p class="review-text">"${text}"</p>
-      <span class="review-author">${author}</span>
-    </div>
-  `;
-  reviewsWrapper.appendChild(slide);
-});
+if (reviewsWrapper) {
+  reviews.forEach(({ text, author }) => {
+    const slide = document.createElement('div');
+    slide.className = 'swiper-slide';
+    slide.innerHTML = `
+      <div class="review-card">
+        <div class="review-stars" aria-label="5 of 5 stars">★★★★★</div>
+        <p class="review-text">"${text}"</p>
+        <span class="review-author">${author}</span>
+      </div>
+    `;
+    reviewsWrapper.appendChild(slide);
+  });
+}
 
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -69,6 +67,43 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
+
+// Mobile nav toggle
+const navToggle = document.getElementById('navToggle');
+const mobileNav = document.getElementById('mobileNav');
+const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
+
+function closeMobileNav() {
+  navToggle.classList.remove('is-open');
+  navToggle.setAttribute('aria-expanded', 'false');
+  navToggle.querySelector('.nav-toggle-icon').textContent = 'menu';
+  mobileNav.classList.remove('is-open');
+  mobileNav.setAttribute('aria-hidden', 'true');
+  mobileNavBackdrop.classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+
+function openMobileNav() {
+  navToggle.classList.add('is-open');
+  navToggle.setAttribute('aria-expanded', 'true');
+  navToggle.querySelector('.nav-toggle-icon').textContent = 'close';
+  mobileNav.classList.add('is-open');
+  mobileNav.setAttribute('aria-hidden', 'false');
+  mobileNavBackdrop.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+
+if (navToggle && mobileNav && mobileNavBackdrop) {
+  navToggle.addEventListener('click', () => {
+    if (mobileNav.classList.contains('is-open')) closeMobileNav();
+    else openMobileNav();
+  });
+  mobileNavBackdrop.addEventListener('click', closeMobileNav);
+  mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMobileNav));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMobileNav();
+  });
+}
 
 // Nav scroll state + scroll progress
 const nav = document.getElementById('mainNav');
@@ -108,7 +143,7 @@ window.addEventListener('scroll', scrollSpy, { passive: true });
 scrollSpy();
 
 // Reveal on scroll
-document.querySelectorAll('.about-inner, .service-card, .portfolio-header, .reviews-carousel, .contact-header').forEach((el) => el.classList.add('reveal'));
+document.querySelectorAll('.about-inner, .service-card, .portfolio-header, .reviews-carousel, .contact-header, .faq-header').forEach((el) => el.classList.add('reveal'));
 
 const observer = new IntersectionObserver(
   (entries) => {
@@ -125,6 +160,7 @@ const observer = new IntersectionObserver(
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
 // Swiper init
+if (document.querySelector('.portfolio-swiper')) {
 const portfolioSwiper = new Swiper('.portfolio-swiper', {
   loop: true,
   slidesPerView: 'auto',
@@ -144,7 +180,9 @@ const portfolioSwiper = new Swiper('.portfolio-swiper', {
   resistance: true,
   resistanceRatio: 0.6,
 });
+}
 
+if (document.querySelector('.reviews-swiper')) {
 const reviewsSwiper = new Swiper('.reviews-swiper', {
   loop: true,
   slidesPerView: 1,
@@ -178,6 +216,7 @@ const reviewsSwiper = new Swiper('.reviews-swiper', {
   resistance: true,
   resistanceRatio: 0.6,
 });
+}
 
 // Hero parallax — subtle background movement on scroll
 const heroBg = document.querySelector('.hero-bg img');
@@ -204,3 +243,21 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('is-open');
+
+    document.querySelectorAll('.faq-item.is-open').forEach((openItem) => {
+      if (openItem !== item) {
+        openItem.classList.remove('is-open');
+        openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    item.classList.toggle('is-open', !isOpen);
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  });
+});

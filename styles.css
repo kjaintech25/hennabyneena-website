@@ -34,7 +34,7 @@
   --shadow-lg: 0 28px 64px rgba(74, 69, 59, 0.18);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; width: 100%; }
 
 body {
   margin: 0;
@@ -44,6 +44,7 @@ body {
   font-size: 16px;
   line-height: 1.65;
   overflow-x: hidden;
+  width: 100%;
   animation: pageIn 0.75s ease both;
 }
 
@@ -53,7 +54,8 @@ body {
   body { animation: none; }
   .reveal { transition: none; opacity: 1; transform: none; }
   .swiper { transition: none; }
-  a, button, .service-card, .contact-pill, .review-card { transition: none !important; }
+  a, button, .service-card, .contact-pill, .contact-location, .review-card { transition: none !important; }
+  .faq-answer, .faq-icon, .faq-item { transition: none !important; }
 }
 
 /* Better tap highlight on mobile */
@@ -258,8 +260,96 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 .nav-links a:hover { color: var(--color-primary); }
 .nav-links a:hover::after { width: 100%; }
 
+.nav-logo-img { transition: transform 0.35s ease; }
+.nav-logo:hover .nav-logo-img { transform: rotate(-4deg) scale(1.05); }
+
 @media (min-width: 768px) {
   .nav-links { display: flex; }
+}
+
+/* ==========================================================================
+   Mobile Nav — hamburger toggle + slide-in drawer
+   ========================================================================== */
+
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  color: var(--color-primary);
+  flex-shrink: 0;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.nav-toggle:hover { background: rgba(92,26,13,0.06); }
+.nav-toggle:active { transform: scale(0.92); }
+
+.nav-toggle-icon {
+  font-size: 26px;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-toggle.is-open .nav-toggle-icon { transform: rotate(90deg); }
+
+@media (min-width: 768px) {
+  .nav-toggle { display: none; }
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(20,15,12,0.4);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.mobile-nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+.mobile-nav {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  z-index: 56;
+  width: min(320px, 84vw);
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  padding: 108px 30px 32px;
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -24px 0 60px rgba(20,15,12,0.2);
+}
+
+.mobile-nav.is-open { transform: translateX(0); }
+
+.mobile-nav a {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(92,26,13,0.08);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.mobile-nav a:hover { color: var(--color-burnt-sienna); transform: translateX(4px); }
+
+.mobile-nav-contact { margin-top: 28px; }
+.mobile-nav-contact .btn { width: 100%; }
+
+@media (min-width: 768px) {
+  .mobile-nav, .mobile-nav-backdrop { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav { transition: none; }
+  .mobile-nav-backdrop { transition: none; }
+  .nav-toggle-icon { transition: none; }
+  .nav-logo-img { transition: none; }
 }
 
 /* ==========================================================================
@@ -320,6 +410,11 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   color: #fff;
   max-width: 640px;
   margin: 0 auto;
+}
+
+.hero .eyebrow {
+  color: var(--color-amber-glow);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.6);
 }
 
 .hero h1 {
@@ -427,7 +522,16 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    ========================================================================== */
 
 .about { padding: var(--section-padding-mobile) var(--gutter); background: var(--color-champagne-silk); }
-.about-inner { max-width: 460px; margin: 0 auto; text-align: center; }
+
+.about-inner {
+  max-width: 460px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
 .about h2 { color: var(--color-primary); }
 
 .quote-block { position: relative; margin-top: 14px; }
@@ -481,7 +585,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   color: var(--color-on-surface-variant);
 }
 
-.about-portrait-wrap { margin-top: 22px; display: flex; justify-content: center; }
+.about-portrait-wrap { display: flex; justify-content: center; }
 
 .about-portrait {
   position: relative;
@@ -513,12 +617,16 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
     max-width: var(--container-max);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: center;
+    grid-template-areas:
+      "header portrait"
+      "body portrait";
+    column-gap: 64px;
+    row-gap: 0;
     text-align: left;
   }
-  .about-portrait-wrap { margin-top: 0; order: 2; }
-  .about-text { order: 1; }
+  .about-header { grid-area: header; }
+  .about-portrait-wrap { grid-area: portrait; justify-content: flex-start; }
+  .about-body { grid-area: body; }
   .about-portrait {
     width: 100%; height: auto;
     aspect-ratio: 4/5;
@@ -803,7 +911,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 /* Swiper overrides */
 .portfolio-swiper {
-  overflow: visible;
+  overflow: hidden;
 }
 
 .portfolio-swiper .swiper-slide {
@@ -980,7 +1088,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 /* Swiper review overrides */
 .reviews-swiper {
-  overflow: visible;
+  overflow: hidden;
 }
 
 .reviews-swiper .swiper-slide {
@@ -1044,6 +1152,250 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   .review-card { padding: 28px; }
   .review-text { font-size: 17px; }
   .reviews-arrow { display: inline-flex; }
+}
+
+/* ==========================================================================
+   Page Header — compact intro band for secondary pages (FAQ, Stain Progression)
+   ========================================================================== */
+
+.page-header {
+  padding: 148px var(--gutter) var(--section-padding-mobile);
+  background: var(--color-background);
+  text-align: center;
+}
+
+.page-header .container { max-width: 640px; margin: 0 auto; }
+
+.page-header h1 { color: var(--color-primary); margin: 0; }
+
+.page-header p {
+  color: var(--color-on-surface-variant);
+  margin: 14px 0 0;
+  font-size: 15px;
+}
+
+.page-header p a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .page-header { padding: 168px var(--gutter) var(--section-padding-desktop); }
+}
+
+/* ==========================================================================
+   Page CTA — closing call-to-action band for secondary pages
+   ========================================================================== */
+
+.page-cta {
+  padding: var(--section-padding-mobile) var(--gutter);
+  background: var(--color-primary);
+  color: #fff;
+  text-align: center;
+}
+
+.page-cta h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  margin: 0 0 12px;
+}
+
+.page-cta p {
+  color: rgba(255,255,255,0.82);
+  margin: 0 0 26px;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 15px;
+}
+
+@media (min-width: 768px) {
+  .page-cta { padding: var(--section-padding-desktop) var(--gutter); }
+  .page-cta h2 { font-size: 36px; }
+}
+
+/* ==========================================================================
+   Stain Progression — stage cards
+   ========================================================================== */
+
+.stain-stages { padding: var(--section-padding-mobile) 0; }
+
+.stain-stage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 0 var(--gutter);
+}
+
+.stain-stage {
+  background: #fff;
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(92,39,34,0.08);
+  box-shadow: 0 6px 18px rgba(20,18,14,0.03);
+  overflow: clip;
+}
+
+.stain-stage-media {
+  aspect-ratio: 4 / 3;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(135deg, rgba(92,26,13,0.08), rgba(216,153,71,0.14)),
+    radial-gradient(circle at 1px 1px, rgba(92, 26, 13, 0.06) 1px, transparent 0);
+  background-size: 100% 100%, 24px 24px;
+}
+
+.stain-stage-media .material-symbols-outlined {
+  font-size: 56px;
+  color: var(--color-burnt-sienna);
+  opacity: 0.45;
+}
+
+.stain-stage-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: rgba(255,255,255,0.9);
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(20,18,14,0.06);
+}
+
+.stain-stage-body { padding: 22px 22px 26px; text-align: center; }
+
+.stain-stage-time {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-burnt-sienna);
+  margin-bottom: 8px;
+}
+
+.stain-stage-body h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--color-primary);
+  margin: 0 0 10px;
+}
+
+.stain-stage-body p {
+  color: var(--color-on-surface-variant);
+  font-size: 14.5px;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .stain-stages { padding: var(--section-padding-desktop) 0; }
+  .stain-stage-list { flex-direction: row; }
+  .stain-stage { flex: 1; }
+}
+
+/* ==========================================================================
+   FAQ — accordion
+   ========================================================================== */
+
+.faq { padding: var(--section-padding-mobile) var(--gutter); background: var(--color-champagne-silk); }
+
+.faq-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 28px;
+}
+
+.faq-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.faq-item {
+  background: #fff;
+  border: 1px solid rgba(92,39,34,0.08);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 6px 18px rgba(20,18,14,0.03);
+  overflow: clip;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.faq-item.is-open {
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(216,153,71,0.3);
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px;
+  text-align: left;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--color-primary);
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: var(--radius-full);
+  background: rgba(92,39,34,0.06);
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.faq-item.is-open .faq-icon {
+  transform: rotate(45deg);
+  background: var(--color-primary);
+  color: var(--color-amber-glow);
+}
+
+.faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.faq-item.is-open .faq-answer {
+  grid-template-rows: 1fr;
+}
+
+.faq-answer-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.faq-answer p {
+  margin: 0 22px 20px;
+  color: var(--color-on-surface-variant);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+@media (min-width: 768px) {
+  .faq { padding: var(--section-padding-desktop) var(--gutter); }
+  .faq-question { padding: 24px 26px; font-size: 16px; }
+  .faq-answer p { margin: 0 26px 22px; font-size: 15px; }
 }
 
 /* ==========================================================================
@@ -1156,10 +1508,55 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   font-weight: 600;
   color: var(--color-primary);
   margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
+
+.contact-location {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  padding: 18px 22px;
+  background: #fff;
+  border: 1px solid rgba(92,39,34,0.08);
+  border-radius: var(--radius-xl);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.contact-location:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(216,153,71,0.35);
+}
+
+.contact-location-icon {
+  font-size: 22px;
+  color: var(--color-primary);
+  border: 1px solid rgba(92,39,34,0.12);
+  background: rgba(92,39,34,0.04);
+  width: 44px; height: 44px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-location-text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.contact-location-arrow {
+  font-size: 18px;
+  color: var(--color-on-surface-variant);
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.contact-location:hover .contact-location-arrow { transform: translateX(4px); }
 
 .contact-note {
   display: flex;
@@ -1198,6 +1595,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 @media (min-width: 1024px) {
   .contact-links { grid-template-columns: repeat(4, 1fr); }
+  .contact-location { padding: 20px 26px; }
 }
 
 /* ==========================================================================
