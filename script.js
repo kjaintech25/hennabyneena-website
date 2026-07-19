@@ -1,3 +1,63 @@
+// ========================================
+// CAROUSEL DATA — Edit these arrays to change images/reviews
+// ========================================
+
+// Portfolio images: Add/remove objects below
+// - src: path to image (local "Real Images/your-image.jpg" or remote URL)
+// - alt: description for accessibility
+const portfolioImages = [
+  { src: "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&q=80", alt: "Bridal mehndi detail" },
+  { src: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80", alt: "Intricate hand mehndi" },
+  { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80", alt: "Mehndi process" },
+  { src: "https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=800&q=80", alt: "Groom's hand mehndi" },
+  { src: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80", alt: "Ceremonial hands" },
+  { src: "https://images.unsplash.com/photo-1529636798458-92182e662485?w=800&q=80", alt: "Floral mehndi" },
+  { src: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&q=80", alt: "Party henna session" },
+  { src: "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?w=800&q=80", alt: "Jagua shoulder" },
+];
+
+// Reviews: Add/remove objects below
+// - text: the review quote
+// - author: reviewer name
+const reviews = [
+  { text: "Neena's bridal mehndi was exquisite. Every guest asked who did my hands. The patterns were personal, delicate, and stayed beautiful for over a week.", author: "Priya R." },
+  { text: "I've worked with many henna artists, but Neena's organic paste and steady hand are unmatched. Her studio is warm, calm, and truly professional.", author: "Amina S." },
+  { text: "We booked Neena for our wedding party and she made every guest feel special. Fast, beautiful designs and the aftercare tips were invaluable.", author: "Mira K." },
+  { text: "The jagua design was stunning—dark, crisp, and exactly what I wanted without the commitment of a tattoo. Will book again.", author: "Zara H." },
+  { text: "Neena came to our Eid gathering and created the most delicate patterns for my mother and grandmother. It felt like a blessing, not just an appointment.", author: "Layla M." },
+  { text: "From consultation to final reveal, the experience was first-class. She understood my vision and made it even better on the wedding day.", author: "Riya D." },
+  { text: "My jagua tattoo lasted beautifully and the removal instructions were easy. Totally worth every minute and penny.", author: "Sophia T." },
+  { text: "Professional, patient, and precise. Neena took time to adjust the design for my sensitive skin and the result was flawless.", author: "Anika P." },
+  { text: "Best mehendi in the Triangle area, hands down. I keep getting compliments weeks later.", author: "Deepa S." },
+  { text: "I love supporting local artists who care about purity and craft. Neena's organic paste smelled amazing and the designs were unforgettable.", author: "Kavya R." },
+];
+
+// ========================================
+// Populate carousels from data above
+// ========================================
+
+const portfolioWrapper = document.getElementById('portfolioWrapper');
+portfolioImages.forEach(({ src, alt }) => {
+  const slide = document.createElement('div');
+  slide.className = 'swiper-slide';
+  slide.innerHTML = `<img src="${src}" alt="${alt}" loading="lazy">`;
+  portfolioWrapper.appendChild(slide);
+});
+
+const reviewsWrapper = document.getElementById('reviewsWrapper');
+reviews.forEach(({ text, author }) => {
+  const slide = document.createElement('div');
+  slide.className = 'swiper-slide';
+  slide.innerHTML = `
+    <div class="review-card">
+      <div class="review-stars" aria-label="5 of 5 stars">★★★★★</div>
+      <p class="review-text">"${text}"</p>
+      <span class="review-author">${author}</span>
+    </div>
+  `;
+  reviewsWrapper.appendChild(slide);
+});
+
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener('click', (e) => {
@@ -87,7 +147,7 @@ const portfolioSwiper = new Swiper('.portfolio-swiper', {
 
 const reviewsSwiper = new Swiper('.reviews-swiper', {
   loop: true,
-  slidesPerView: 'auto',
+  slidesPerView: 1,
   spaceBetween: 18,
   speed: 420,
   grabCursor: true,
@@ -102,12 +162,45 @@ const reviewsSwiper = new Swiper('.reviews-swiper', {
     clickable: true,
   },
   breakpoints: {
-    640: { spaceBetween: 20 },
-    900: { spaceBetween: 24 },
-    1100: { spaceBetween: 28 },
+    640: {
+      slidesPerView: 1.5,
+      spaceBetween: 20,
+    },
+    900: {
+      slidesPerView: 2.5,
+      spaceBetween: 24,
+    },
+    1100: {
+      slidesPerView: 3,
+      spaceBetween: 28,
+    },
   },
   resistance: true,
   resistanceRatio: 0.6,
 });
+
+// Hero parallax — subtle background movement on scroll
+const heroBg = document.querySelector('.hero-bg img');
+const hero = document.querySelector('.hero');
+
+if (heroBg && hero) {
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const heroHeight = hero.offsetHeight;
+    
+    // Only parallax while hero is visible
+    if (scrolled < heroHeight) {
+      const speed = 0.3; // Subtle — 30% of scroll speed
+      heroBg.style.transform = `translateY(${scrolled * speed}px)`;
+    }
+  }, { passive: true });
+}
+
+// Back to top button
+const backToTop = document.getElementById('backToTop');
+
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('is-visible', window.scrollY > 600);
+}, { passive: true });
 
 document.getElementById('year').textContent = new Date().getFullYear();

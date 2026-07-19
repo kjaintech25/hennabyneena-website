@@ -282,16 +282,35 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    linear-gradient(to top, rgba(10,8,6,0.78), rgba(10,8,6,0.2)),
-    url("Real Images/stock hero image.jpg") center center / cover no-repeat;
 }
 
-.hero-bg::after {
-  content: '';
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(10,8,6,0.35) 100%);
+  will-change: transform;
+}
+
+.hero-bg > div {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(10,8,6,0.85) 0%, rgba(10,8,6,0.5) 35%, rgba(10,8,6,0.3) 65%, rgba(10,8,6,0.4) 100%),
+    radial-gradient(ellipse at center, rgba(10,8,6,0.35) 0%, rgba(10,8,6,0.55) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Additional scrim behind hero text for readability */
+.hero-content::before {
+  content: '';
+  position: absolute;
+  inset: -40px -60px;
+  background: radial-gradient(ellipse at center, rgba(10,8,6,0.55) 0%, rgba(10,8,6,0.25) 60%, transparent 100%);
+  border-radius: 40px;
+  z-index: -1;
   pointer-events: none;
 }
 
@@ -310,14 +329,16 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   line-height: 1.12;
   margin: 0 0 18px;
   letter-spacing: -0.015em;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 4px 24px rgba(0,0,0,0.3);
 }
 
 .hero p {
   font-size: 15px;
   font-weight: 400;
   line-height: 1.68;
-  color: rgba(255,255,255,0.88);
+  color: rgba(255,255,255,0.92);
   margin: 0 0 24px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
 }
 
 .hero-ctas {
@@ -879,9 +900,6 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 .reviews-track::-webkit-scrollbar { display: none; }
 
 .review-card {
-  flex: none;
-  width: 88vw;
-  scroll-snap-align: center;
   background: #fff;
   border: 1px solid rgba(92,39,34,0.06);
   border-radius: var(--radius-2xl);
@@ -966,18 +984,18 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 .reviews-swiper .swiper-slide {
-  width: 88vw;
   height: auto;
   flex-shrink: 0;
 }
 
 .reviews-swiper .swiper-slide .review-card {
   width: 100%;
+  height: 100%;
 }
 
 .reviews .swiper-pagination {
   position: relative;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .reviews .swiper-pagination-bullet {
@@ -1023,10 +1041,9 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 @media (min-width: 768px) {
   .reviews { padding: var(--section-padding-desktop) 0; }
-  .review-card { width: 420px; padding: 28px; }
+  .review-card { padding: 28px; }
   .review-text { font-size: 17px; }
   .reviews-arrow { display: inline-flex; }
-  .reviews-swiper .swiper-slide .review-card { width: 420px; }
 }
 
 /* ==========================================================================
@@ -1294,6 +1311,61 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 @media (min-width: 768px) {
   .mobile-quick-bar { display: none; }
   body { padding-bottom: 0; }
+}
+
+/* ==========================================================================
+   Back to top button
+   ========================================================================== */
+
+.back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.25s ease;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: var(--color-burnt-sienna);
+  transform: translateY(-2px);
+}
+
+.back-to-top .material-symbols-outlined {
+  font-size: 22px;
+}
+
+@media (min-width: 768px) {
+  .back-to-top {
+    bottom: 32px;
+    right: 32px;
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* Mobile: adjust position when quick bar is visible */
+@media (max-width: 767px) {
+  .back-to-top {
+    bottom: 80px;
+  }
 }
 
 /* ==========================================================================
