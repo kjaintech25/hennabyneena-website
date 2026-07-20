@@ -6,24 +6,38 @@
 // - src: path to image (local "Real Images/your-image.jpg" or remote URL)
 // - alt: description for accessibility
 const portfolioImages = [
-  { src: "https://images.unsplash.com/photo-1661885411165-a08c34f40488?w=800&q=80", alt: "Bridal mehndi detail" },
-  { src: "https://images.unsplash.com/photo-1669257966198-5243002b0ca8?w=800&q=80", alt: "Intricate hand mehndi" },
-  { src: "https://images.unsplash.com/photo-1735158238825-a133e43c8ae4?w=800&q=80", alt: "Bridal arm mehndi" },
-  { src: "https://images.unsplash.com/photo-1633104502901-10d124036629?w=800&q=80", alt: "Groom's hand mehndi" },
-  { src: "https://images.unsplash.com/photo-1782876224837-e7163083c4c7?w=800&q=80", alt: "Ceremonial mehndi feet" },
-  { src: "https://images.unsplash.com/photo-1681519251874-91d0e62d4268?w=800&q=80", alt: "Floral mehndi" },
-  { src: "https://images.unsplash.com/photo-1684813910513-11e6b30adc22?w=800&q=80", alt: "Party henna session" },
-  { src: "https://images.unsplash.com/photo-1566360896955-1ebb427d0e14?w=800&q=80", alt: "Dark mehndi design" },
+  { src: "Real Images/Gallery 01.webp", alt: "Bridal mehndi hands with bangles" },
+  { src: "Real Images/Gallery 02.webp", alt: "Detailed floral mehndi design" },
+  { src: "Real Images/Gallery 03.webp", alt: "Full-coverage mehndi on both hands" },
+  { src: "Real Images/Gallery 04.webp", alt: "Bridal mehndi on arms and feet" },
+  { src: "Real Images/Gallery 05.webp", alt: "Bride and groom celebrating with henna" },
+  { src: "Real Images/Gallery 06.webp", alt: "Bridal mehndi close-up with engagement ring" },
+  { src: "Real Images/Gallery 07.webp", alt: "Detailed bridal mehndi on forearms" },
+  { src: "Real Images/Gallery 08.webp", alt: "Bridal mehndi portrait" },
+  { src: "Real Images/Gallery 09.webp", alt: "Intricate bridal mehndi on forearms" },
+  { src: "Real Images/Gallery 10.webp", alt: "Bridal mehndi feet design" },
+  { src: "Real Images/Gallery 11.webp", alt: "Elegant bridal mehndi hand design" },
+  { src: "Real Images/Gallery 12.webp", alt: "Bride portrait with bridal mehndi and jewelry" },
 ];
 
 // Reviews: Add/remove objects below
-// - text: the review quote
+// - text: the review quote (shortened where needed for card length)
 // - author: reviewer name
-// Sourced and paraphrased from Neena's real Google Business reviews (5.0 stars, 184 reviews)
+// Sourced from Neena's real Google Business reviews (5.0 stars, 184 reviews)
 const reviews = [
   { text: "Neena did henna for my entire wedding party — me, my sister-in-law, my mother-in-law, and even my husband. She worked quickly without ever cutting corners on quality, and it showed in every detail.", author: "Amy T." },
   { text: "Neena walked me through exactly how to prep my skin before and care for it after, and the results were stunning — intricate, beautiful, and the stain came out richer than I expected.", author: "Seema R." },
   { text: "Neena did a fantastic job on our bridal henna. She's fast, incredibly talented, and the color always turns out beautifully — you won't regret booking her.", author: "Liron & Julia" },
+  { text: "Neena brought my vision to life with Adinkra symbols, executed with such precision, care, and cultural respect. Every symbol was intentional and beautifully rendered — I left feeling adorned and truly seen.", author: "Desiree A." },
+  { text: "My bridal henna was stunning — intricate, detailed, and completely customized to what I wanted. You can tell how much pride she takes in her art.", author: "Tazeen F." },
+  { text: "Neena is so talented and easy to work with! I was thrilled with the results and got compliments all weekend on her design.", author: "Emily M." },
+  { text: "Neena did henna for me, my mom, and my sister for my wedding — every stain turned out stunning with incredible longevity. She's deliberate, precise, and so much fun to work with.", author: "Ahana W." },
+  { text: "Her henna work is absolutely stunning — detailed, precise, and unique. She made the whole experience so enjoyable, and our henna turned out more beautiful than we imagined.", author: "Victoria I." },
+  { text: "Neena did my bridal henna and my whole family's. Her attention to detail and patience is unmatched, and she's a wonderful communicator throughout booking.", author: "Tiffany W." },
+  { text: "Neena did my henna for my wedding and it was beautiful. Despite the long session, she kept it low-stress and fun — I got so many compliments.", author: "Shreya N." },
+  { text: "Neena incorporated everything I wanted — peacock, bells, a puppy paw print — with incredible detail. She made me feel completely comfortable throughout.", author: "Harini S." },
+  { text: "A wonderful experience getting my henna done by Neena. Professional, quick, and creative — the color turned out beautifully deep.", author: "Bina J." },
+  { text: "Absolutely the best work ever! Her dedication and passion show in every design — wait until the stain sets in, it's stunning.", author: "Abhirayna H." },
 ];
 
 // ========================================
@@ -143,7 +157,7 @@ window.addEventListener('scroll', scrollSpy, { passive: true });
 scrollSpy();
 
 // Reveal on scroll
-document.querySelectorAll('.about-inner, .service-card, .portfolio-header, .reviews-carousel, .contact-header, .faq-header').forEach((el) => el.classList.add('reveal'));
+document.querySelectorAll('.about-header, .about-body, .service-card, .portfolio-header, .reviews-carousel, .contact-header, .faq-header').forEach((el) => el.classList.add('reveal'));
 
 const observer = new IntersectionObserver(
   (entries) => {
