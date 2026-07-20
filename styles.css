@@ -34,7 +34,7 @@
   --shadow-lg: 0 28px 64px rgba(74, 69, 59, 0.18);
 }
 
-html { scroll-behavior: smooth; overflow-x: hidden; width: 100%; }
+html { scroll-behavior: smooth; overflow-x: clip; width: 100%; }
 
 body {
   margin: 0;
@@ -43,7 +43,7 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.65;
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
   animation: pageIn 0.75s ease both;
 }
@@ -71,8 +71,8 @@ a:focus-visible, button:focus-visible {
 ::selection { background: rgba(216, 153, 71, 0.35); color: var(--color-primary); }
 
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -521,7 +521,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    About
    ========================================================================== */
 
-.about { padding: var(--section-padding-mobile) var(--gutter); background: var(--color-champagne-silk); overflow: hidden; }
+.about { padding: var(--section-padding-mobile) var(--gutter); background: var(--color-champagne-silk); }
 
 .about-inner {
   max-width: 460px;
@@ -625,11 +625,17 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
     text-align: left;
   }
   .about-header { grid-area: header; }
-  .about-portrait-wrap { grid-area: portrait; justify-content: flex-start; align-items: stretch; }
+  .about-portrait-wrap {
+    grid-area: portrait;
+    justify-content: flex-start;
+    align-items: flex-start;
+    position: sticky;
+    top: 100px;
+  }
   .about-body { grid-area: body; }
   .about-portrait {
-    width: 100%; height: 100%;
-    max-height: 640px;
+    width: 100%;
+    height: 600px;
     padding: 0;
     background: transparent;
     border-radius: var(--radius-xl);
@@ -662,7 +668,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    ========================================================================== */
 
 .services {
-  padding: var(--section-padding-mobile) 0;
+  padding: var(--section-padding-mobile) 0 28px;
   position: relative;
   overflow: hidden;
 }
@@ -766,7 +772,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 .service-card.inverted .service-card-link { color: var(--color-amber-glow); }
 
 @media (min-width: 768px) {
-  .services { padding: var(--section-padding-desktop) 0; }
+  .services { padding: var(--section-padding-desktop) 0 48px; }
   .service-cards { flex-direction: row; gap: 24px; }
   .service-card {
     flex: 1;
@@ -784,7 +790,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 .portfolio {
   background: var(--color-primary);
-  padding: 148px 0 var(--section-padding-mobile);
+  padding: 148px 0 32px;
   overflow: hidden;
   color: #fff;
   position: relative;
@@ -956,7 +962,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 @media (min-width: 768px) {
-  .portfolio { padding: 168px 0 var(--section-padding-desktop); }
+  .portfolio { padding: 168px 0 48px; }
   .carousel-item { width: 460px; }
   .carousel-item img { height: 560px; }
   .portfolio-swiper .swiper-slide { width: 460px; }
@@ -964,11 +970,57 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 /* ==========================================================================
+   Instagram Feed
+   ========================================================================== */
+
+.instagram {
+  padding: 32px 0 var(--section-padding-mobile);
+  background: var(--color-surface);
+}
+
+.instagram-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.instagram-embed {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.instagram-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 56px var(--gutter);
+  border: 1px dashed var(--color-outline-variant);
+  border-radius: var(--radius-2xl);
+  background: var(--color-champagne-silk);
+}
+
+.instagram-fallback-icon {
+  font-size: 36px;
+  color: var(--color-primary);
+}
+
+.instagram-fallback p {
+  color: var(--color-on-surface-variant);
+  max-width: 380px;
+  font-size: 15px;
+}
+
+@media (min-width: 768px) {
+  .instagram { padding: 48px 0 var(--section-padding-desktop); }
+}
+
+/* ==========================================================================
    Reviews — elevated cards & navigation
    ========================================================================== */
 
 .reviews {
-  padding: var(--section-padding-mobile) 0;
+  padding: 28px 0 32px;
   background: var(--color-surface);
   overflow: hidden;
   position: relative;
@@ -1148,7 +1200,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 .reviews-next { right: 6px; }
 
 @media (min-width: 768px) {
-  .reviews { padding: var(--section-padding-desktop) 0; }
+  .reviews { padding: 48px 0 48px; }
   .review-card { padding: 28px; }
   .review-text { font-size: 17px; }
   .reviews-arrow { display: inline-flex; }
@@ -1214,6 +1266,12 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 @media (min-width: 768px) {
   .page-cta { padding: var(--section-padding-desktop) var(--gutter); }
   .page-cta h2 { font-size: 36px; }
+}
+
+.portfolio + .page-cta { padding-top: 32px; }
+
+@media (min-width: 768px) {
+  .portfolio + .page-cta { padding-top: 48px; }
 }
 
 /* ==========================================================================
@@ -1571,37 +1629,11 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 .contact-location:hover .contact-location-arrow { transform: translateX(4px); }
 
-.contact-note {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 28px auto 0;
-  max-width: 640px;
-  font-size: 14px;
-  color: var(--color-on-surface-variant);
-  font-weight: 500;
-  padding: 12px 20px;
-  background: rgba(255,255,255,0.55);
-  border: 1px solid rgba(92,26,13,0.08);
-  border-radius: var(--radius-full);
-  backdrop-filter: blur(6px);
-}
-
-.contact-note .material-symbols-outlined {
-  font-size: 18px;
-  color: var(--color-burnt-sienna);
-  border-radius: 50%;
-  background: rgba(158,70,36,0.1);
-  padding: 4px;
-  width: 26px; height: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+.contact-page { padding-top: 148px; }
 
 @media (min-width: 768px) {
   .contact { padding: var(--section-padding-desktop) var(--gutter); }
+  .contact-page { padding-top: 168px; }
   .contact-links { grid-template-columns: repeat(2, 1fr); gap: 18px; }
   .contact-pill { padding: 26px 24px; }
 }
