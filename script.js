@@ -49,7 +49,7 @@ if (portfolioWrapper) {
   portfolioImages.forEach(({ src, alt }) => {
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
-    slide.innerHTML = `<img src="${src}" alt="${alt}" loading="lazy">`;
+    slide.innerHTML = `<img src="${src}" alt="${alt}">`;
     portfolioWrapper.appendChild(slide);
   });
 }
