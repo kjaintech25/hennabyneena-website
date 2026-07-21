@@ -1,5 +1,5 @@
 # Henna by Neena Jain Website — Memory
-Updated: 2026-07-21 | Real content complete (gallery, reviews, stain progression), deployed to GitHub Pages, layout polish pass done
+Updated: 2026-07-21 | Real content complete (gallery, reviews, stain progression), deployed to GitHub Pages, layout tightened sitewide
 
 ## Stack
 - Frontend: Static HTML/CSS/JS, no build step, no framework
@@ -9,6 +9,8 @@ Updated: 2026-07-21 | Real content complete (gallery, reviews, stain progression
 ## Workflow
 - **Commit and push directly to `main`.** No feature branches, no PRs — Kush asked to drop that workflow (2026-07-21) since this is a solo repo with no CI gating.
 - Browser-preview cache is unreliable mid-session (stale CSS/JS survives reloads) — cache-bust with a `?v=` query string on the `<link>`/`<script>` tag when verifying a change, then remove it before committing.
+- The browser preview tool itself is flaky this environment: `navigate()` on an already-open tab frequently no-ops silently (check `location.href` after navigating — if it didn't move, open a fresh tab with `tabs_create` instead), and `screenshot` intermittently returns a blank frame even when the page is fine. Don't trust either as the sole source of truth — verify layout/content changes with direct DOM inspection (`getBoundingClientRect`, `getComputedStyle`, real network request logs) and treat screenshots as a secondary sanity check, not primary evidence.
+- Kush prefers **tight, compact spacing** over generous/airy whitespace as a general design taste for this site — when adding new sections, default to the smaller end of spacing rather than assuming a template's default padding is fine.
 
 ## Status — KSCRUM-172 (parent ticket)
 Done: KSCRUM-175 (gallery images), KSCRUM-176 (Google reviews), KSCRUM-187 (FAQ accordion), KSCRUM-188 (stain progression photos).
@@ -26,7 +28,8 @@ Open:
 ## Critical Paths
 - index.html/styles.css/script.js: shared core
 - book.html: contact/booking page (nav tab is "Book Now", not "Contact")
-- faq.html: FAQ accordion + Stain Progression carousel (Swiper, loop+autoplay)
+- faq.html: page order is **Stain Progression carousel first** (right under the intro), then FAQ accordion, then CTA — deliberately reordered from the original FAQ-first layout
+- Section rhythm: `--section-padding-mobile`/`--section-padding-desktop` (in `:root`) are 20px/32px and drive nearly all section-to-section spacing sitewide — tune these two variables rather than patching individual section padding when adjusting overall page density
 - Repo: github.com/kjaintech25/hennabyneena-website, branch `main` only
 - Jira: KSCRUM board, parent epic KSCRUM-1 → KSCRUM-172 (this site)
 
@@ -37,3 +40,4 @@ Open:
 - A CSS `transform` left on an ancestor after an animation finishes (even a no-op `translateY(0)`, via `animation-fill-mode: both`) creates a new containing block that also breaks `position: sticky`/`fixed` on descendants. Keep entrance animations to opacity-only if anything downstream needs sticky/fixed positioning.
 - `position: sticky` on a CSS Grid item that spans multiple rows needs `align-self: start` (not the default `stretch`) to actually stick in this environment — stretch silently no-ops it.
 - Native `img loading="lazy"` inside a Swiper carousel is unreliable — Swiper's transform-based slide positioning confuses the browser's "near viewport" heuristic, so images can just never fire their fetch on a normal page visit (confirmed on the live deploy, not a cache artifact). Don't use `loading="lazy"` on images inside `.swiper-slide`; Swiper already manages what's rendered.
+- The hero's scroll-down chevron (`.scroll-indicator`) was reported as visually off-center more than once — verified via `getBoundingClientRect` math at 375px/1440px/1920px widths, on both local and the live deploy: it's centered exactly relative to `.hero`'s own box every time. Don't re-investigate this as a CSS bug without new evidence; if it recurs, get the reporter's exact browser/OS first.
