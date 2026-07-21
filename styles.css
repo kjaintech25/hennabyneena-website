@@ -27,8 +27,8 @@
 
   --container-max: 1200px;
   --gutter: 20px;
-  --section-padding-mobile: 56px;
-  --section-padding-desktop: 96px;
+  --section-padding-mobile: 20px;
+  --section-padding-desktop: 32px;
 
   --shadow-soft: 0 16px 40px rgba(74, 69, 59, 0.14);
   --shadow-lg: 0 28px 64px rgba(74, 69, 59, 0.18);
@@ -669,7 +669,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    ========================================================================== */
 
 .services {
-  padding: var(--section-padding-mobile) 0 28px;
+  padding: var(--section-padding-mobile) 0;
   position: relative;
   overflow: hidden;
 }
@@ -773,7 +773,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 .service-card.inverted .service-card-link { color: var(--color-amber-glow); }
 
 @media (min-width: 768px) {
-  .services { padding: var(--section-padding-desktop) 0 48px; }
+  .services { padding: var(--section-padding-desktop) 0; }
   .service-cards { flex-direction: row; gap: 24px; }
   .service-card {
     flex: 1;
@@ -791,7 +791,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 .portfolio {
   background: var(--color-primary);
-  padding: 148px 0 32px;
+  padding: 110px 0 var(--section-padding-mobile);
   overflow: hidden;
   color: #fff;
   position: relative;
@@ -975,7 +975,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    ========================================================================== */
 
 .instagram {
-  padding: 32px 0 var(--section-padding-mobile);
+  padding: var(--section-padding-mobile) 0;
   background: var(--color-surface);
 }
 
@@ -1013,7 +1013,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 @media (min-width: 768px) {
-  .instagram { padding: 48px 0 var(--section-padding-desktop); }
+  .instagram { padding: var(--section-padding-desktop) 0; }
 }
 
 /* ==========================================================================
@@ -1021,7 +1021,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    ========================================================================== */
 
 .reviews {
-  padding: 28px 0 32px;
+  padding: var(--section-padding-mobile) 0;
   background: var(--color-surface);
   overflow: hidden;
   position: relative;
@@ -1201,7 +1201,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 .reviews-next { right: 6px; }
 
 @media (min-width: 768px) {
-  .reviews { padding: 48px 0 48px; }
+  .reviews { padding: var(--section-padding-desktop) 0; }
   .review-card { padding: 28px; }
   .review-text { font-size: 17px; }
   .reviews-arrow { display: inline-flex; }
@@ -1212,7 +1212,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    ========================================================================== */
 
 .page-header {
-  padding: 148px var(--gutter) var(--section-padding-mobile);
+  padding: 110px var(--gutter) var(--section-padding-mobile);
   background: var(--color-background);
   text-align: center;
 }
@@ -1235,7 +1235,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 @media (min-width: 768px) {
-  .page-header { padding: 168px var(--gutter) var(--section-padding-desktop); }
+  .page-header { padding: 110px var(--gutter) var(--section-padding-desktop); }
 }
 
 /* ==========================================================================
@@ -1267,12 +1267,6 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 @media (min-width: 768px) {
   .page-cta { padding: var(--section-padding-desktop) var(--gutter); }
   .page-cta h2 { font-size: 36px; }
-}
-
-.portfolio + .page-cta { padding-top: 32px; }
-
-@media (min-width: 768px) {
-  .portfolio + .page-cta { padding-top: 48px; }
 }
 
 /* ==========================================================================
@@ -1659,11 +1653,11 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 .contact-location:hover .contact-location-arrow { transform: translateX(4px); }
 
-.contact-page { padding-top: 148px; }
+.contact-page { padding-top: 110px; }
 
 @media (min-width: 768px) {
   .contact { padding: var(--section-padding-desktop) var(--gutter); }
-  .contact-page { padding-top: 168px; }
+  .contact-page { padding-top: 110px; }
   .contact-links { grid-template-columns: repeat(2, 1fr); gap: 18px; }
   .contact-pill { padding: 26px 24px; }
 }
