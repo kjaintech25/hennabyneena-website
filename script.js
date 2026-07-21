@@ -232,6 +232,43 @@ const reviewsSwiper = new Swiper('.reviews-swiper', {
 });
 }
 
+if (document.querySelector('.stain-swiper')) {
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const stainSwiper = new Swiper('.stain-swiper', {
+  loop: true,
+  slidesPerView: 1,
+  spaceBetween: 20,
+  speed: 420,
+  grabCursor: true,
+  centeredSlides: false,
+  watchSlidesProgress: true,
+  autoplay: prefersReducedMotion ? false : {
+    delay: 2600,
+    disableOnInteraction: false,
+  },
+  navigation: {
+    prevEl: '.stain-prev',
+    nextEl: '.stain-next',
+  },
+  pagination: {
+    el: '.stain-stages .swiper-pagination',
+    clickable: true,
+  },
+  breakpoints: {
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    1024: {
+      slidesPerView: 3,
+      spaceBetween: 22,
+    },
+  },
+  resistance: true,
+  resistanceRatio: 0.6,
+});
+}
+
 // Hero parallax — subtle background movement on scroll
 const heroBg = document.querySelector('.hero-bg img');
 const hero = document.querySelector('.hero');

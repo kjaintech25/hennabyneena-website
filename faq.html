@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="Real Images/logo.JPG">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 </head>
 <body>
   <a class="skip-to-content" href="#main">Skip to content</a>
@@ -120,47 +121,62 @@
           <div class="ornament" aria-hidden="true"><span class="ornament-dot"></span></div>
           <p>Henna doesn't reveal its true color right away. Here's what happens between the moment the paste goes on and your final, richest stain.</p>
         </div>
-        <div class="stain-stage-list">
-          <article class="stain-stage">
-            <div class="stain-stage-media">
-              <img src="Real Images/Stain Fresh Applied.webp" alt="Henna paste freshly applied on hand" loading="lazy">
+        <div class="stain-stage-carousel">
+          <div class="swiper stain-swiper">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <article class="stain-stage">
+                  <div class="stain-stage-media">
+                    <img src="Real Images/Stain Fresh Applied.webp" alt="Henna paste freshly applied on hand" loading="lazy">
+                  </div>
+                  <div class="stain-stage-body">
+                    <span class="stain-stage-time">Freshly Applied</span>
+                    <h3>Paste On</h3>
+                    <p>The paste goes on dark and needs to stay put for 4–6 hours. This is just the paste — not the final stain color underneath.</p>
+                  </div>
+                </article>
+              </div>
+              <div class="swiper-slide">
+                <article class="stain-stage">
+                  <div class="stain-stage-media">
+                    <img src="Real Images/Stain 0 Hours.webp" alt="Henna stain right after the paste is removed" loading="lazy">
+                  </div>
+                  <div class="stain-stage-body">
+                    <span class="stain-stage-time">Right After Removal</span>
+                    <h3>0 Hours</h3>
+                    <p>Once the dried paste flakes away, the stain underneath starts out surprisingly light — a soft orange that will keep deepening over the next couple of days.</p>
+                  </div>
+                </article>
+              </div>
+              <div class="swiper-slide">
+                <article class="stain-stage">
+                  <div class="stain-stage-media">
+                    <img src="Real Images/Stain 12 Hours.webp" alt="Henna stain deepening after 12 hours" loading="lazy">
+                  </div>
+                  <div class="stain-stage-body">
+                    <span class="stain-stage-time">Still Deepening</span>
+                    <h3>12 Hours</h3>
+                    <p>The color keeps darkening and richening as it oxidizes, moving from orange toward a warm reddish-brown.</p>
+                  </div>
+                </article>
+              </div>
+              <div class="swiper-slide">
+                <article class="stain-stage">
+                  <div class="stain-stage-media">
+                    <img src="Real Images/Stain 48 Hours.webp" alt="Fully oxidized henna stain after 48 hours" loading="lazy">
+                  </div>
+                  <div class="stain-stage-body">
+                    <span class="stain-stage-time">Full Oxidation</span>
+                    <h3>48 Hours</h3>
+                    <p>The stain reaches its darkest, richest reddish-brown — this is the color that will last through 1–3 weeks with proper aftercare.</p>
+                  </div>
+                </article>
+              </div>
             </div>
-            <div class="stain-stage-body">
-              <span class="stain-stage-time">Freshly Applied</span>
-              <h3>Paste On</h3>
-              <p>The paste goes on dark and needs to stay put for 4–6 hours. This is just the paste — not the final stain color underneath.</p>
-            </div>
-          </article>
-          <article class="stain-stage">
-            <div class="stain-stage-media">
-              <img src="Real Images/Stain 0 Hours.webp" alt="Henna stain right after the paste is removed" loading="lazy">
-            </div>
-            <div class="stain-stage-body">
-              <span class="stain-stage-time">Right After Removal</span>
-              <h3>0 Hours</h3>
-              <p>Once the dried paste flakes away, the stain underneath starts out surprisingly light — a soft orange that will keep deepening over the next couple of days.</p>
-            </div>
-          </article>
-          <article class="stain-stage">
-            <div class="stain-stage-media">
-              <img src="Real Images/Stain 12 Hours.webp" alt="Henna stain deepening after 12 hours" loading="lazy">
-            </div>
-            <div class="stain-stage-body">
-              <span class="stain-stage-time">Still Deepening</span>
-              <h3>12 Hours</h3>
-              <p>The color keeps darkening and richening as it oxidizes, moving from orange toward a warm reddish-brown.</p>
-            </div>
-          </article>
-          <article class="stain-stage">
-            <div class="stain-stage-media">
-              <img src="Real Images/Stain 48 Hours.webp" alt="Fully oxidized henna stain after 48 hours" loading="lazy">
-            </div>
-            <div class="stain-stage-body">
-              <span class="stain-stage-time">Full Oxidation</span>
-              <h3>48 Hours</h3>
-              <p>The stain reaches its darkest, richest reddish-brown — this is the color that will last through 1–3 weeks with proper aftercare.</p>
-            </div>
-          </article>
+            <div class="stain-arrow stain-prev"><span class="material-symbols-outlined">chevron_left</span></div>
+            <div class="stain-arrow stain-next"><span class="material-symbols-outlined">chevron_right</span></div>
+            <div class="swiper-pagination"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -218,6 +234,7 @@
     <span class="material-symbols-outlined">arrow_upward</span>
   </a>
 
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
