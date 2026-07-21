@@ -1310,38 +1310,19 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 .stain-stage-media {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: clip;
   background:
     linear-gradient(135deg, rgba(92,26,13,0.08), rgba(216,153,71,0.14)),
     radial-gradient(circle at 1px 1px, rgba(92, 26, 13, 0.06) 1px, transparent 0);
   background-size: 100% 100%, 24px 24px;
 }
 
-.stain-stage-media .material-symbols-outlined {
-  font-size: 56px;
-  color: var(--color-burnt-sienna);
-  opacity: 0.45;
-}
-
-.stain-stage-badge {
-  position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  background: rgba(255,255,255,0.9);
-  padding: 7px 14px;
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(20,18,14,0.06);
+.stain-stage-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .stain-stage-body { padding: 22px 22px 26px; text-align: center; }
