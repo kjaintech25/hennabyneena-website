@@ -2,22 +2,16 @@
 // CAROUSEL DATA — Edit these arrays to change images/reviews
 // ========================================
 
-// Portfolio images: Add/remove objects below
-// - src: path to image (local "Real Images/your-image.jpg" or remote URL)
-// - alt: description for accessibility
-const portfolioImages = [
-  { src: "Real Images/Gallery 01.webp", alt: "Bridal mehndi hands with bangles" },
-  { src: "Real Images/Gallery 02.webp", alt: "Detailed floral mehndi design" },
-  { src: "Real Images/Gallery 03.webp", alt: "Full-coverage mehndi on both hands" },
-  { src: "Real Images/Gallery 04.webp", alt: "Bridal mehndi on arms and feet" },
-  { src: "Real Images/Gallery 05.webp", alt: "Bride and groom celebrating with henna" },
-  { src: "Real Images/Gallery 06.webp", alt: "Bridal mehndi close-up with engagement ring" },
-  { src: "Real Images/Gallery 07.webp", alt: "Detailed bridal mehndi on forearms" },
-  { src: "Real Images/Gallery 08.webp", alt: "Bridal mehndi portrait" },
-  { src: "Real Images/Gallery 09.webp", alt: "Intricate bridal mehndi on forearms" },
-  { src: "Real Images/Gallery 10.webp", alt: "Bridal mehndi feet design" },
-  { src: "Real Images/Gallery 11.webp", alt: "Elegant bridal mehndi hand design" },
-  { src: "Real Images/Gallery 12.webp", alt: "Bride portrait with bridal mehndi and jewelry" },
+// Gallery carousels: one entry per carousel on gallery.html
+// - id: must match the data-collection attribute on the markup block
+// - dir: folder holding the images
+// - count: how many images, named <id>-01.webp … <id>-NN.webp
+// - alt: accessibility description (image number is appended automatically)
+// To add photos: drop <id>-NN.webp in the folder and bump count.
+const galleryCollections = [
+  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 11, alt: "Bridal mehndi design by Neena Jain" },
+  { id: "stylish", dir: "Real Images/Gallery/stylish", count: 26, alt: "Stylish henna design by Neena Jain" },
+  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 5,  alt: "Jagua body art by Neena Jain" },
 ];
 
 // Reviews: Add/remove objects below
@@ -44,15 +38,21 @@ const reviews = [
 // Populate carousels from data above
 // ========================================
 
-const portfolioWrapper = document.getElementById('portfolioWrapper');
-if (portfolioWrapper) {
-  portfolioImages.forEach(({ src, alt }) => {
+galleryCollections.forEach(({ id, dir, count, alt }) => {
+  const block = document.querySelector(`.gallery-collection[data-collection="${id}"]`);
+  if (!block) return;
+  const wrapper = block.querySelector('.gallery-wrapper');
+  if (!wrapper) return;
+
+  for (let i = 1; i <= count; i++) {
+    const num = String(i).padStart(2, '0');
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
-    slide.innerHTML = `<img src="${src}" alt="${alt}">`;
-    portfolioWrapper.appendChild(slide);
-  });
-}
+    // No loading="lazy" here — it's unreliable inside a Swiper (see CLAUDE_MEMORY.md)
+    slide.innerHTML = `<img src="${dir}/${id}-${num}.webp" alt="${alt} (${i} of ${count})">`;
+    wrapper.appendChild(slide);
+  }
+});
 
 const reviewsWrapper = document.getElementById('reviewsWrapper');
 if (reviewsWrapper) {
@@ -174,27 +174,33 @@ const observer = new IntersectionObserver(
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
 // Swiper init
-if (document.querySelector('.portfolio-swiper')) {
-const portfolioSwiper = new Swiper('.portfolio-swiper', {
-  loop: true,
-  slidesPerView: 'auto',
-  spaceBetween: 18,
-  speed: 420,
-  grabCursor: true,
-  centeredSlides: false,
-  watchSlidesProgress: true,
-  navigation: {
-    prevEl: '#prevBtn',
-    nextEl: '#nextBtn',
-  },
-  pagination: {
-    el: '.portfolio-swiper .swiper-pagination',
-    clickable: true,
-  },
-  resistance: true,
-  resistanceRatio: 0.6,
+// One Swiper per gallery collection, each wired to its own arrows and dots
+document.querySelectorAll('.gallery-collection').forEach((block) => {
+  const el = block.querySelector('.portfolio-swiper');
+  if (!el) return;
+  new Swiper(el, {
+    loop: true,
+    slidesPerView: 'auto',
+    spaceBetween: 18,
+    speed: 420,
+    grabCursor: true,
+    centeredSlides: false,
+    watchSlidesProgress: true,
+    navigation: {
+      prevEl: block.querySelector('.gallery-prev'),
+      nextEl: block.querySelector('.gallery-next'),
+    },
+    pagination: {
+      el: block.querySelector('.gallery-pagination'),
+      clickable: true,
+      // Stylish has 26 slides — a full bullet row would overflow on mobile
+      dynamicBullets: true,
+      dynamicMainBullets: 3,
+    },
+    resistance: true,
+    resistanceRatio: 0.6,
+  });
 });
-}
 
 if (document.querySelector('.reviews-swiper')) {
 const reviewsSwiper = new Swiper('.reviews-swiper', {

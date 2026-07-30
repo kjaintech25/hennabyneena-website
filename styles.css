@@ -701,6 +701,8 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 .service-cards { display: flex; flex-direction: column; gap: 22px; }
 
+.services-cta { display: flex; justify-content: center; margin-top: 26px; }
+
 .service-card {
   background: #fff;
   border-radius: var(--radius-xl);
@@ -915,6 +917,9 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   background: #ffffff;
   transform: scale(1.25);
 }
+
+/* Gallery collections — one carousel per henna style */
+.gallery-collection + .gallery-collection { margin-top: 44px; }
 
 /* Swiper overrides */
 .portfolio-swiper {
@@ -1410,6 +1415,17 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   margin: 0 auto 28px;
 }
 
+.faq-group + .faq-group { margin-top: 28px; }
+
+.faq-group-title {
+  max-width: 760px;
+  margin: 0 auto 12px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
 .faq-list {
   max-width: 760px;
   margin: 0 auto;
@@ -1487,10 +1503,26 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   line-height: 1.65;
 }
 
+/* Answers with more than one block (e.g. pricing) breathe tighter between them */
+.faq-answer p:not(:last-child) { margin-bottom: 10px; }
+
+.faq-answer ul {
+  margin: 0 22px 20px;
+  padding-left: 20px;
+  color: var(--color-on-surface-variant);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.faq-answer li { margin-bottom: 4px; }
+
 @media (min-width: 768px) {
   .faq { padding: var(--section-padding-desktop) var(--gutter); }
   .faq-question { padding: 24px 26px; font-size: 16px; }
   .faq-answer p { margin: 0 26px 22px; font-size: 15px; }
+  .faq-answer ul { margin: 0 26px 22px; font-size: 15px; }
+  .faq-group-title { font-size: 26px; }
+  .faq-group + .faq-group { margin-top: 36px; }
 }
 
 /* ==========================================================================
@@ -1663,8 +1695,22 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 @media (min-width: 1024px) {
-  .contact-links { grid-template-columns: repeat(4, 1fr); }
   .contact-location { padding: 20px 26px; }
+}
+
+/* Single row only once four pills genuinely fit (~1200px). Below that the
+   768px rule keeps them 2-up, which gives the email plenty of room.
+   Flex (not 4 equal columns) so each pill takes the width its own text needs:
+   the long email address stays on one line without shrinking the type in the
+   other three. */
+@media (min-width: 1200px) {
+  .contact-links {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+  .contact-pill { flex: 1 1 auto; min-width: 0; }
+  .contact-pill .value { white-space: nowrap; overflow-wrap: normal; }
 }
 
 /* ==========================================================================
