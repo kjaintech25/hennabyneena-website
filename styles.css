@@ -56,6 +56,7 @@ body {
   .swiper { transition: none; }
   a, button, .service-card, .contact-pill, .contact-location, .review-card { transition: none !important; }
   .faq-answer, .faq-icon, .faq-item { transition: none !important; }
+  .faq-group-panel, .faq-group-icon { transition: none !important; }
 }
 
 /* Better tap highlight on mobile */
@@ -701,7 +702,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 .service-cards { display: flex; flex-direction: column; gap: 22px; }
 
-.services-cta { display: flex; justify-content: center; margin-top: 26px; }
+.services-cta { display: flex; justify-content: center; margin: 0 0 24px; }
 
 .service-card {
   background: #fff;
@@ -1415,16 +1416,72 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   margin: 0 auto 28px;
 }
 
-.faq-group + .faq-group { margin-top: 28px; }
+.faq-group + .faq-group { margin-top: 12px; }
+
+.faq-group-heading { max-width: 760px; margin: 0 auto; }
+
+.faq-group-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  text-align: left;
+  background: rgba(92,39,34,0.05);
+  border: 1px solid rgba(92,39,34,0.1);
+  border-radius: var(--radius-xl);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.faq-group-toggle:hover { background: rgba(92,39,34,0.09); }
+
+.faq-group.is-open .faq-group-toggle {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
 
 .faq-group-title {
-  max-width: 760px;
-  margin: 0 auto 12px;
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--color-primary);
 }
+
+.faq-group.is-open .faq-group-title { color: #fff; }
+
+.faq-group-icon {
+  flex-shrink: 0;
+  font-size: 26px;
+  color: var(--color-primary);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.faq-group.is-open .faq-group-icon {
+  transform: rotate(180deg);
+  color: var(--color-amber-glow);
+}
+
+/* Same 0fr→1fr mechanism as .faq-answer, one level up */
+.faq-group-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.faq-group.is-open .faq-group-panel { grid-template-rows: 1fr; }
+
+/* The grid row collapses to 0fr, so this clips its own overflow. Breathing room
+   goes on the first item, not as padding here — padding on the grid item would
+   survive the collapse and leave a visible sliver. */
+.faq-group-panel > .faq-list {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.faq-group-panel .faq-item:first-child { margin-top: 14px; }
 
 .faq-list {
   max-width: 760px;
@@ -1521,8 +1578,9 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   .faq-question { padding: 24px 26px; font-size: 16px; }
   .faq-answer p { margin: 0 26px 22px; font-size: 15px; }
   .faq-answer ul { margin: 0 26px 22px; font-size: 15px; }
-  .faq-group-title { font-size: 26px; }
-  .faq-group + .faq-group { margin-top: 36px; }
+  .faq-group-title { font-size: 24px; }
+  .faq-group-toggle { padding: 20px 26px; }
+  .faq-group + .faq-group { margin-top: 14px; }
 }
 
 /* ==========================================================================

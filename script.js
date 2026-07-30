@@ -301,20 +301,43 @@ window.addEventListener('scroll', () => {
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// FAQ accordion
+// FAQ category accordion — groups start collapsed, one open at a time
+// ========================================
+// FAQ — collapsible categories, each holding collapsible questions
+// ========================================
+
+function setFaqItemOpen(item, open) {
+  item.classList.toggle('is-open', open);
+  item.querySelector('.faq-question').setAttribute('aria-expanded', String(open));
+}
+
+function setFaqGroupOpen(group, open) {
+  group.classList.toggle('is-open', open);
+  group.querySelector('.faq-group-toggle').setAttribute('aria-expanded', String(open));
+  if (!open) {
+    // Reset the questions inside so the category reopens clean
+    group.querySelectorAll('.faq-item.is-open').forEach((item) => setFaqItemOpen(item, false));
+  }
+}
+
+document.querySelectorAll('.faq-group-toggle').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const group = btn.closest('.faq-group');
+    const isOpen = group.classList.contains('is-open');
+    document.querySelectorAll('.faq-group.is-open').forEach((g) => setFaqGroupOpen(g, false));
+    if (!isOpen) setFaqGroupOpen(group, true);
+  });
+});
+
 document.querySelectorAll('.faq-question').forEach((btn) => {
   btn.addEventListener('click', () => {
     const item = btn.closest('.faq-item');
     const isOpen = item.classList.contains('is-open');
 
     document.querySelectorAll('.faq-item.is-open').forEach((openItem) => {
-      if (openItem !== item) {
-        openItem.classList.remove('is-open');
-        openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
-      }
+      if (openItem !== item) setFaqItemOpen(openItem, false);
     });
 
-    item.classList.toggle('is-open', !isOpen);
-    btn.setAttribute('aria-expanded', String(!isOpen));
+    setFaqItemOpen(item, !isOpen);
   });
 });
