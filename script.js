@@ -9,11 +9,11 @@
 // - alt: accessibility description (image number is appended automatically)
 // To add photos: drop <id>-NN.webp in the folder and bump count.
 const galleryCollections = [
-  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 11, alt: "Bridal mehndi design by Neena Jain" },
-  { id: "stylish", dir: "Real Images/Gallery/stylish", count: 26, alt: "Stylish henna design by Neena Jain" },
-  { id: "party",   dir: "Real Images/Gallery/party",   count: 19, alt: "Party henna design by Neena Jain" },
+  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 20, alt: "Bridal mehndi design by Neena Jain" },
+  { id: "stylish", dir: "Real Images/Gallery/stylish", count: 17, alt: "Stylish henna design by Neena Jain" },
+  { id: "party",   dir: "Real Images/Gallery/party",   count: 18, alt: "Party henna design by Neena Jain" },
   { id: "guest",   dir: "Real Images/Gallery/guest",   count: 13, alt: "Event guest henna by Neena Jain" },
-  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 12, alt: "Jagua body art by Neena Jain" },
+  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 13, alt: "Jagua body art by Neena Jain" },
   { id: "white",   dir: "Real Images/Gallery/white",   count: 4,  alt: "White henna design by Neena Jain" },
 ];
 
