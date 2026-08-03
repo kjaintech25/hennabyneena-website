@@ -1639,6 +1639,10 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   align-items: center;
   gap: 18px;
   padding: 22px 24px;
+  /* The stylesheet has no global box-sizing reset, so without this the
+     percentage flex-basis below resolves against the content box and each
+     pill ends up ~50px wider than intended (padding + border). */
+  box-sizing: border-box;
   background: #fff;
   border: 1px solid rgba(92,39,34,0.08);
   border-radius: var(--radius-xl);
@@ -1667,7 +1671,10 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 .contact-pill:hover::before { transform: scaleY(1); }
 
-.contact-pill .material-symbols-outlined {
+/* .contact-pill-brand carries an inline SVG (Facebook has no Material Symbol)
+   and shares the same round icon treatment */
+.contact-pill .material-symbols-outlined,
+.contact-pill .contact-pill-brand {
   font-size: 22px;
   color: var(--color-primary);
   border: 1px solid rgba(92,39,34,0.12);
@@ -1681,7 +1688,8 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-.contact-pill:hover .material-symbols-outlined {
+.contact-pill:hover .material-symbols-outlined,
+.contact-pill:hover .contact-pill-brand {
   background: var(--color-primary);
   color: var(--color-amber-glow);
 }
@@ -1756,26 +1764,23 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 @media (min-width: 768px) {
   .contact { padding: var(--section-padding-desktop) var(--gutter); }
   .contact-page { padding-top: 110px; }
-  .contact-links { grid-template-columns: repeat(2, 1fr); gap: 18px; }
-  .contact-pill { padding: 26px 24px; }
+  /* Flex rather than equal columns so an odd count (five contact methods)
+     centres its last row instead of leaving a hole. */
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+  }
+  .contact-pill { flex: 0 1 calc(50% - 9px); min-width: 0; padding: 26px 24px; }
 }
 
 @media (min-width: 1024px) {
   .contact-location { padding: 20px 26px; }
-}
-
-/* Single row only once four pills genuinely fit (~1200px). Below that the
-   768px rule keeps them 2-up, which gives the email plenty of room.
-   Flex (not 4 equal columns) so each pill takes the width its own text needs:
-   the long email address stays on one line without shrinking the type in the
-   other three. */
-@media (min-width: 1200px) {
-  .contact-links {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: stretch;
-  }
-  .contact-pill { flex: 1 1 auto; min-width: 0; }
+  /* Three across, so five pills land 3 + 2 centred. A third of the row is
+     comfortably wider than the long email address, so it stays on one line
+     without shrinking the type in the others. */
+  .contact-pill { flex-basis: calc(33.333% - 12px); }
   .contact-pill .value { white-space: nowrap; overflow-wrap: normal; }
 }
 
