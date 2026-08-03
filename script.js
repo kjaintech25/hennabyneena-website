@@ -11,7 +11,10 @@
 const galleryCollections = [
   { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 11, alt: "Bridal mehndi design by Neena Jain" },
   { id: "stylish", dir: "Real Images/Gallery/stylish", count: 26, alt: "Stylish henna design by Neena Jain" },
-  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 5,  alt: "Jagua body art by Neena Jain" },
+  { id: "party",   dir: "Real Images/Gallery/party",   count: 19, alt: "Party henna design by Neena Jain" },
+  { id: "guest",   dir: "Real Images/Gallery/guest",   count: 13, alt: "Event guest henna by Neena Jain" },
+  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 12, alt: "Jagua body art by Neena Jain" },
+  { id: "white",   dir: "Real Images/Gallery/white",   count: 4,  alt: "White henna design by Neena Jain" },
 ];
 
 // Reviews: Add/remove objects below
@@ -38,18 +41,31 @@ const reviews = [
 // Populate carousels from data above
 // ========================================
 
+// Swiper's loop needs roughly 2x the visible slides to build its buffer. At
+// desktop width ~3 slides show, so a carousel with only a handful of photos
+// silently stops advancing. Repeat the set until there are enough — a loop
+// shows the same photos round and round anyway.
+const MIN_SLIDES_FOR_LOOP = 8;
+
 galleryCollections.forEach(({ id, dir, count, alt }) => {
   const block = document.querySelector(`.gallery-collection[data-collection="${id}"]`);
   if (!block) return;
   const wrapper = block.querySelector('.gallery-wrapper');
   if (!wrapper) return;
 
-  for (let i = 1; i <= count; i++) {
-    const num = String(i).padStart(2, '0');
+  const total = count < MIN_SLIDES_FOR_LOOP
+    ? Math.ceil(MIN_SLIDES_FOR_LOOP / count) * count
+    : count;
+
+  for (let i = 0; i < total; i++) {
+    const n = (i % count) + 1;
+    const isRepeat = i >= count;
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
     // No loading="lazy" here — it's unreliable inside a Swiper (see CLAUDE_MEMORY.md)
-    slide.innerHTML = `<img src="${dir}/${id}-${num}.webp" alt="${alt} (${i} of ${count})">`;
+    slide.innerHTML = isRepeat
+      ? `<img src="${dir}/${id}-${String(n).padStart(2, '0')}.webp" alt="" aria-hidden="true">`
+      : `<img src="${dir}/${id}-${String(n).padStart(2, '0')}.webp" alt="${alt} (${n} of ${count})">`;
     wrapper.appendChild(slide);
   }
 });
