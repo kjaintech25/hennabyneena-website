@@ -60,15 +60,50 @@ galleryCollections.forEach(({ id, dir, count, alt }) => {
   for (let i = 0; i < total; i++) {
     const n = (i % count) + 1;
     const isRepeat = i >= count;
+    const src = `${dir}/${id}-${String(n).padStart(2, '0')}.webp`;
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
-    // No loading="lazy" here — it's unreliable inside a Swiper (see CLAUDE_MEMORY.md)
+    // src is withheld until the slide is actually needed — see hydrateWindow().
+    // Native loading="lazy" can't be used here; it's unreliable inside a Swiper
+    // (see CLAUDE_MEMORY.md), so the loading window is managed explicitly.
     slide.innerHTML = isRepeat
-      ? `<img src="${dir}/${id}-${String(n).padStart(2, '0')}.webp" alt="" aria-hidden="true">`
-      : `<img src="${dir}/${id}-${String(n).padStart(2, '0')}.webp" alt="${alt} (${n} of ${count})">`;
+      ? `<img data-src="${src}" alt="" aria-hidden="true" decoding="async">`
+      : `<img data-src="${src}" alt="${alt} (${n} of ${count})" decoding="async">`;
     wrapper.appendChild(slide);
   }
 });
+
+// ========================================
+// Gallery image loading
+// ========================================
+// Loading all 85 gallery images up front costs ~11MB and, worse, ~385MB of
+// decoded bitmap held in memory at once — enough to make scrolling crawl on a
+// phone. Instead each carousel loads only a window of slides around the one
+// you're looking at, and loads nothing at all until it scrolls near the
+// viewport.
+const HYDRATE_BEHIND = 3;
+const HYDRATE_AHEAD = 6;
+
+function hydrate(img) {
+  if (!img || !img.dataset.src) return;
+  img.src = img.dataset.src;
+  delete img.dataset.src;
+}
+
+// Initialising a looping Swiper fires slideChange as it positions itself, which
+// would otherwise load every carousel on the page before any of them is in view.
+const activatedCarousels = new WeakSet();
+
+function hydrateWindow(swiper) {
+  if (!activatedCarousels.has(swiper)) return;
+  const slides = swiper.slides;
+  const n = slides.length;
+  if (!n) return;
+  for (let offset = -HYDRATE_BEHIND; offset <= HYDRATE_AHEAD; offset++) {
+    const i = ((swiper.activeIndex + offset) % n + n) % n;
+    hydrate(slides[i] && slides[i].querySelector('img'));
+  }
+}
 
 const reviewsWrapper = document.getElementById('reviewsWrapper');
 if (reviewsWrapper) {
@@ -139,15 +174,6 @@ if (navToggle && mobileNav && mobileNavBackdrop) {
 const nav = document.getElementById('mainNav');
 const scrollProgress = document.getElementById('scrollProgress');
 
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY;
-  nav.classList.toggle('is-scrolled', scrollY > 40);
-
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
-  scrollProgress.style.width = progress + '%';
-}, { passive: true });
-
 // Scroll-spy — highlight active nav link
 const sections = document.querySelectorAll('section[id], header[id]');
 const navLinks = document.querySelectorAll('.nav-links a');
@@ -169,8 +195,32 @@ const scrollSpy = () => {
   });
 };
 
-window.addEventListener('scroll', scrollSpy, { passive: true });
-scrollSpy();
+// Every scroll-driven read below (scrollHeight, offsetTop, offsetHeight) forces
+// the browser to recalculate layout. Firing them on each of the dozens of scroll
+// events per second is what makes a long page feel sticky, so they share one
+// handler that runs at most once per animation frame.
+let scrollTicking = false;
+
+function onScrollFrame() {
+  scrollTicking = false;
+  const scrollY = window.scrollY;
+
+  nav.classList.toggle('is-scrolled', scrollY > 40);
+
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+  scrollProgress.style.width = progress + '%';
+
+  scrollSpy();
+  if (backToTop) backToTop.classList.toggle('is-visible', scrollY > 600);
+  hydrateNearbyCollections(); // no-op off the gallery page
+}
+
+window.addEventListener('scroll', () => {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(onScrollFrame);
+}, { passive: true });
 
 // Reveal on scroll
 document.querySelectorAll('.about-header, .about-body, .service-card, .portfolio-header, .reviews-carousel, .contact-header, .faq-header').forEach((el) => el.classList.add('reveal'));
@@ -190,11 +240,29 @@ const observer = new IntersectionObserver(
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
 // Swiper init
+// A carousel loads its first images once it's within this many pixels of the
+// viewport. Checked explicitly against getBoundingClientRect rather than with
+// IntersectionObserver, so the trigger point is predictable and testable.
+const HYDRATE_MARGIN_PX = 600;
+const pendingCollections = [];
+
+function hydrateNearbyCollections() {
+  for (let i = pendingCollections.length - 1; i >= 0; i--) {
+    const { block, swiper } = pendingCollections[i];
+    const rect = block.getBoundingClientRect();
+    const near = rect.top < window.innerHeight + HYDRATE_MARGIN_PX && rect.bottom > -HYDRATE_MARGIN_PX;
+    if (!near) continue;
+    activatedCarousels.add(swiper);
+    hydrateWindow(swiper); // slideChange keeps it topped up from here
+    pendingCollections.splice(i, 1);
+  }
+}
+
 // One Swiper per gallery collection, each wired to its own arrows and dots
 document.querySelectorAll('.gallery-collection').forEach((block) => {
   const el = block.querySelector('.portfolio-swiper');
   if (!el) return;
-  new Swiper(el, {
+  const swiper = new Swiper(el, {
     loop: true,
     slidesPerView: 'auto',
     spaceBetween: 18,
@@ -215,8 +283,16 @@ document.querySelectorAll('.gallery-collection').forEach((block) => {
     },
     resistance: true,
     resistanceRatio: 0.6,
+    on: {
+      slideChange() { hydrateWindow(this); },
+      resize() { hydrateWindow(this); },
+    },
   });
+
+  pendingCollections.push({ block, swiper });
 });
+
+hydrateNearbyCollections();
 
 if (document.querySelector('.reviews-swiper')) {
 const reviewsSwiper = new Swiper('.reviews-swiper', {
@@ -296,24 +372,30 @@ const heroBg = document.querySelector('.hero-bg img');
 const hero = document.querySelector('.hero');
 
 if (heroBg && hero) {
+  // Read the hero height once instead of on every scroll event
+  let heroHeight = hero.offsetHeight;
+  window.addEventListener('resize', () => { heroHeight = hero.offsetHeight; }, { passive: true });
+
+  let heroTicking = false;
   window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const heroHeight = hero.offsetHeight;
-    
-    // Only parallax while hero is visible
-    if (scrolled < heroHeight) {
-      const speed = 0.3; // Subtle — 30% of scroll speed
-      heroBg.style.transform = `translateY(${scrolled * speed}px)`;
-    }
+    if (heroTicking) return;
+    heroTicking = true;
+    requestAnimationFrame(() => {
+      heroTicking = false;
+      const scrolled = window.scrollY;
+      // Only parallax while hero is visible
+      if (scrolled < heroHeight) {
+        const speed = 0.3; // Subtle — 30% of scroll speed
+        heroBg.style.transform = `translateY(${scrolled * speed}px)`;
+      }
+    });
   }, { passive: true });
 }
 
-// Back to top button
+// Back to top button — visibility is handled in onScrollFrame above
 const backToTop = document.getElementById('backToTop');
 
-window.addEventListener('scroll', () => {
-  backToTop.classList.toggle('is-visible', window.scrollY > 600);
-}, { passive: true });
+onScrollFrame();
 
 document.getElementById('year').textContent = new Date().getFullYear();
 

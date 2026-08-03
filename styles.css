@@ -937,6 +937,9 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   width: 100%;
   height: 360px;
   object-fit: cover;
+  /* Slides load on demand, so give one that hasn't arrived yet a soft tint
+     rather than a bright empty box */
+  background: rgba(255,255,255,0.05);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255,255,255,0.12);
