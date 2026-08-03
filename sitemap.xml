@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://kjaintech25.github.io/hennabyneena-website/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://kjaintech25.github.io/hennabyneena-website/gallery.html</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://kjaintech25.github.io/hennabyneena-website/faq.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kjaintech25.github.io/hennabyneena-website/book.html</loc>
+    <priority>0.9</priority>
+  </url>
+</urlset>

@@ -919,6 +919,10 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   transform: scale(1.25);
 }
 
+/* The 110px top padding clears the fixed nav; when a page header already does
+   that, the carousels just need normal section spacing. */
+.portfolio.has-page-header { padding-top: var(--section-padding-mobile); }
+
 /* Gallery collections — one carousel per henna style */
 .gallery-collection + .gallery-collection { margin-top: 44px; }
 
@@ -973,6 +977,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 
 @media (min-width: 768px) {
   .portfolio { padding: 110px 0 40px; }
+  .portfolio.has-page-header { padding-top: var(--section-padding-desktop); }
   .carousel-item { width: 400px; }
   .carousel-item img { height: 420px; }
   .portfolio-swiper .swiper-slide { width: 400px; }
