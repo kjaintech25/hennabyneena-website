@@ -1,1 +1,7 @@
 .DS_Store
+
+# macOS/iCloud sometimes resurrects a copy of a file while it's being rewritten,
+# named "whatever 2.webp". These duplicated 28 gallery images once during a
+# conversion run — ignore them so they can never be committed by `git add -A`.
+* 2.*
+* 3.*
