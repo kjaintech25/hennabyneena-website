@@ -9,7 +9,8 @@
 // - alt: accessibility description (image number is appended automatically)
 // To add photos: drop <id>-NN.webp in the folder and bump count.
 const galleryCollections = [
-  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 31, alt: "Bridal mehndi design by Neena Jain" },
+  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 16, alt: "Bridal mehndi design by Neena Jain" },
+  { id: "feet",    dir: "Real Images/Gallery/feet",    count: 15, alt: "Feet mehndi design by Neena Jain" },
   { id: "stylish", dir: "Real Images/Gallery/stylish", count: 17, alt: "Stylish henna design by Neena Jain" },
   { id: "party",   dir: "Real Images/Gallery/party",   count: 18, alt: "Party henna design by Neena Jain" },
   { id: "guest",   dir: "Real Images/Gallery/guest",   count: 13, alt: "Event guest henna by Neena Jain" },
