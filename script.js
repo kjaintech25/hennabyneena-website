@@ -9,10 +9,11 @@
 // - alt: accessibility description (image number is appended automatically)
 // To add photos: drop <id>-NN.webp in the folder and bump count.
 const galleryCollections = [
-  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 20, alt: "Bridal mehndi design by Neena Jain" },
+  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 31, alt: "Bridal mehndi design by Neena Jain" },
   { id: "stylish", dir: "Real Images/Gallery/stylish", count: 17, alt: "Stylish henna design by Neena Jain" },
   { id: "party",   dir: "Real Images/Gallery/party",   count: 18, alt: "Party henna design by Neena Jain" },
   { id: "guest",   dir: "Real Images/Gallery/guest",   count: 13, alt: "Event guest henna by Neena Jain" },
+  { id: "family",  dir: "Real Images/Gallery/family",  count: 15, alt: "Family henna by Neena Jain" },
   { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 13, alt: "Jagua body art by Neena Jain" },
   { id: "white",   dir: "Real Images/Gallery/white",   count: 4,  alt: "White henna design by Neena Jain" },
 ];
@@ -86,8 +87,14 @@ const HYDRATE_AHEAD = 6;
 
 function hydrate(img) {
   if (!img || !img.dataset.src) return;
+  // Slides start transparent and fade in once decoded, so a photo arriving
+  // mid-scroll eases in rather than snapping into place.
+  const reveal = () => img.classList.add('is-loaded');
+  img.addEventListener('load', reveal, { once: true });
+  img.addEventListener('error', reveal, { once: true });
   img.src = img.dataset.src;
   delete img.dataset.src;
+  if (img.complete) reveal(); // already in cache — no load event coming
 }
 
 // Initialising a looping Swiper fires slideChange as it positions itself, which
@@ -246,11 +253,20 @@ document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 const HYDRATE_MARGIN_PX = 600;
 const pendingCollections = [];
 
+// window.innerHeight can still read 0 when this first runs (layout not settled,
+// web fonts not swapped in yet). Falling back to 0 would collapse the threshold
+// and leave even the top carousel unloaded until the first scroll, so assume a
+// typical viewport until a real measurement is available.
+function viewportHeight() {
+  return window.innerHeight || document.documentElement.clientHeight || 800;
+}
+
 function hydrateNearbyCollections() {
+  const vh = viewportHeight();
   for (let i = pendingCollections.length - 1; i >= 0; i--) {
     const { block, swiper } = pendingCollections[i];
     const rect = block.getBoundingClientRect();
-    const near = rect.top < window.innerHeight + HYDRATE_MARGIN_PX && rect.bottom > -HYDRATE_MARGIN_PX;
+    const near = rect.top < vh + HYDRATE_MARGIN_PX && rect.bottom > -HYDRATE_MARGIN_PX;
     if (!near) continue;
     activatedCarousels.add(swiper);
     hydrateWindow(swiper); // slideChange keeps it topped up from here
@@ -293,6 +309,12 @@ document.querySelectorAll('.gallery-collection').forEach((block) => {
 });
 
 hydrateNearbyCollections();
+
+// Positions shift as fonts swap in and images settle, so re-check once the page
+// has fully loaded and whenever it's resized. Scrolling already triggers this
+// via onScrollFrame.
+window.addEventListener('load', hydrateNearbyCollections);
+window.addEventListener('resize', hydrateNearbyCollections, { passive: true });
 
 if (document.querySelector('.reviews-swiper')) {
 const reviewsSwiper = new Swiper('.reviews-swiper', {

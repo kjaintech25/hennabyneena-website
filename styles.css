@@ -57,6 +57,8 @@ body {
   a, button, .service-card, .contact-pill, .contact-location, .review-card { transition: none !important; }
   .faq-answer, .faq-icon, .faq-item { transition: none !important; }
   .faq-group-panel, .faq-group-icon { transition: none !important; }
+  .portfolio-swiper .swiper-slide img { transition: none !important; }
+  .service-cards .service-card { transition-delay: 0s !important; }
 }
 
 /* Better tap highlight on mobile */
@@ -194,6 +196,10 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Cards in a row ease in one after another rather than all at once */
+.service-cards .service-card:nth-child(2) { transition-delay: 0.1s; }
+.service-cards .service-card:nth-child(3) { transition-delay: 0.2s; }
 
 /* ==========================================================================
    Nav
@@ -942,14 +948,19 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   height: 360px;
   object-fit: cover;
   /* Slides load on demand, so give one that hasn't arrived yet a soft tint
-     rather than a bright empty box */
+     rather than a bright empty box, then fade the photo in over it.
+     Safe to default to transparent: script.js creates these <img> elements,
+     so if it never runs there are no slides to hide. */
   background: rgba(255,255,255,0.05);
+  opacity: 0;
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255,255,255,0.12);
   transform: translateZ(0);
-  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  transition: transform 0.6s ease, box-shadow 0.6s ease, opacity 0.55s ease;
 }
+
+.portfolio-swiper .swiper-slide img.is-loaded { opacity: 1; }
 
 .portfolio-swiper .swiper-slide:hover img {
   transform: translateY(-6px) scale(1.01);
