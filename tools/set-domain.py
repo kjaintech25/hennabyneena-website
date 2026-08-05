@@ -28,6 +28,7 @@ FILES = ["index.html", "gallery.html", "faq.html", "book.html",
 # Matches any scheme://host(/path) we've previously used as the base.
 KNOWN_BASES = [
     "https://kjaintech25.github.io/hennabyneena-website",
+    "https://hennabyneenajain.com",
 ]
 
 

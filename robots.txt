@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kjaintech25.github.io/hennabyneena-website/sitemap.xml
+Sitemap: https://hennabyneenajain.com/sitemap.xml
