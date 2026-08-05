@@ -1,0 +1,40 @@
+# Netlify config. There's no build step — the repo root IS the site.
+[build]
+  publish = "."
+  command = ""
+
+# Long cache for fingerprint-stable assets. The gallery photos and vendored
+# Swiper never change under the same filename, so they can be cached hard.
+[[headers]]
+  for = "/Real Images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML/CSS/JS do change in place, so revalidate rather than cache blindly —
+# otherwise an edit to styles.css wouldn't reach people who already visited.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/styles.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/script.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
