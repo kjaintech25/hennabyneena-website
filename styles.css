@@ -996,52 +996,6 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
 }
 
 /* ==========================================================================
-   Instagram Feed
-   ========================================================================== */
-
-.instagram {
-  padding: var(--section-padding-mobile) 0;
-  background: var(--color-surface);
-}
-
-.instagram-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.instagram-embed {
-  max-width: 780px;
-  margin: 0 auto;
-}
-
-.instagram-fallback {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  text-align: center;
-  padding: 56px var(--gutter);
-  border: 1px dashed var(--color-outline-variant);
-  border-radius: var(--radius-2xl);
-  background: var(--color-champagne-silk);
-}
-
-.instagram-fallback-icon {
-  font-size: 36px;
-  color: var(--color-primary);
-}
-
-.instagram-fallback p {
-  color: var(--color-on-surface-variant);
-  max-width: 380px;
-  font-size: 15px;
-}
-
-@media (min-width: 768px) {
-  .instagram { padding: var(--section-padding-desktop) 0; }
-}
-
-/* ==========================================================================
    Reviews — elevated cards & navigation
    ========================================================================== */
 

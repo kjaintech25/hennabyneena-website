@@ -15,7 +15,7 @@ const galleryCollections = [
   { id: "party",   dir: "Real Images/Gallery/party",   count: 18, alt: "Party henna design by Neena Jain" },
   { id: "guest",   dir: "Real Images/Gallery/guest",   count: 13, alt: "Event guest henna by Neena Jain" },
   { id: "family",  dir: "Real Images/Gallery/family",  count: 15, alt: "Family henna by Neena Jain" },
-  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 13, alt: "Jagua body art by Neena Jain" },
+  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 23, alt: "Jagua body art by Neena Jain" },
   { id: "white",   dir: "Real Images/Gallery/white",   count: 4,  alt: "White henna design by Neena Jain" },
 ];
 
