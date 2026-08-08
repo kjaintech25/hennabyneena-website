@@ -22,9 +22,17 @@ const galleryCollections = [
 // - boutiqueTabs: the filter row. "all" is special-cased to show everything.
 // - boutiqueItems: one entry per piece. `type` must match a tab id.
 // - boutiqueCovers: the photo on each of the three headline cards.
-// Drop photos in Real Images/Boutique/<type>/ and point `src` at them. Any item
-// left with an empty `src` renders as a labelled placeholder tile, so the page
-// is reviewable before the real photos exist.
+//
+// Every `src` below currently points at Real Images/Boutique/placeholders/ —
+// decorative mandala artwork standing in until Neena's own photos arrive. They
+// are deliberately ornamental rather than pictures of garments: a stock photo of
+// a saree she doesn't own would read as a claim about what's in stock.
+//
+// To swap in a real photo: drop it in Real Images/Boutique/<type>/ and point
+// `src` there. Anything under /placeholders/ is treated as decorative (empty
+// alt text, since the item name below the tile already names it); a real photo
+// path gets the item name as its alt automatically. An empty `src` still falls
+// back to a "photo coming soon" tile.
 const boutiqueTabs = [
   { id: "all",         label: "All" },
   { id: "sarees",      label: "Sarees" },
@@ -35,28 +43,28 @@ const boutiqueTabs = [
 ];
 
 const boutiqueCovers = {
-  clothing:    "",
-  jewelry:     "",
-  accessories: "",
+  clothing:    "Real Images/Boutique/placeholders/cover-clothing.svg",
+  jewelry:     "Real Images/Boutique/placeholders/cover-jewelry.svg",
+  accessories: "Real Images/Boutique/placeholders/cover-accessories.svg",
 };
 
-// PLACEHOLDERS — replace names/notes with the real pieces and add `src` paths.
+// PLACEHOLDER NAMES — swap these for the pieces Neena actually carries.
 const boutiqueItems = [
-  { type: "sarees",      name: "Banarasi Silk Saree",   note: "Gold zari border",        src: "" },
-  { type: "sarees",      name: "Georgette Saree",       note: "Lightweight, everyday",   src: "" },
-  { type: "sarees",      name: "Embroidered Saree",     note: "Party wear",              src: "" },
-  { type: "lehengas",    name: "Bridal Lehenga",        note: "Heavy hand embroidery",   src: "" },
-  { type: "lehengas",    name: "Festive Lehenga",       note: "Sangeet & garba",         src: "" },
-  { type: "suits",       name: "Anarkali Suit",         note: "Full-length, flared",     src: "" },
-  { type: "suits",       name: "Punjabi Salwar Suit",   note: "Cotton, everyday",        src: "" },
-  { type: "suits",       name: "Printed Kurti",         note: "Casual wear",             src: "" },
-  { type: "jewelry",     name: "Bridal Necklace Set",   note: "Necklace + earrings",     src: "" },
-  { type: "jewelry",     name: "Jhumka Earrings",       note: "Several colours",         src: "" },
-  { type: "jewelry",     name: "Bangle Set",            note: "Sized to order",          src: "" },
-  { type: "jewelry",     name: "Maang Tikka",           note: "Bridal headpiece",        src: "" },
-  { type: "accessories", name: "Embroidered Dupatta",   note: "Mix and match",           src: "" },
-  { type: "accessories", name: "Potli Bag",             note: "Silk, beaded",            src: "" },
-  { type: "accessories", name: "Bindi Sets",            note: "Assorted designs",        src: "" },
+  { type: "sarees",      name: "Banarasi Silk Saree",   note: "Gold zari border",        src: "Real Images/Boutique/placeholders/saree-01.svg" },
+  { type: "sarees",      name: "Georgette Saree",       note: "Lightweight, everyday",   src: "Real Images/Boutique/placeholders/saree-02.svg" },
+  { type: "sarees",      name: "Embroidered Saree",     note: "Party wear",              src: "Real Images/Boutique/placeholders/saree-03.svg" },
+  { type: "lehengas",    name: "Bridal Lehenga",        note: "Heavy hand embroidery",   src: "Real Images/Boutique/placeholders/lehenga-01.svg" },
+  { type: "lehengas",    name: "Festive Lehenga",       note: "Sangeet & garba",         src: "Real Images/Boutique/placeholders/lehenga-02.svg" },
+  { type: "suits",       name: "Anarkali Suit",         note: "Full-length, flared",     src: "Real Images/Boutique/placeholders/anarkali.svg" },
+  { type: "suits",       name: "Punjabi Salwar Suit",   note: "Cotton, everyday",        src: "Real Images/Boutique/placeholders/salwar.svg" },
+  { type: "suits",       name: "Printed Kurti",         note: "Casual wear",             src: "Real Images/Boutique/placeholders/kurti.svg" },
+  { type: "jewelry",     name: "Bridal Necklace Set",   note: "Necklace + earrings",     src: "Real Images/Boutique/placeholders/necklace.svg" },
+  { type: "jewelry",     name: "Jhumka Earrings",       note: "Several colours",         src: "Real Images/Boutique/placeholders/jhumka.svg" },
+  { type: "jewelry",     name: "Bangle Set",            note: "Sized to order",          src: "Real Images/Boutique/placeholders/bangles.svg" },
+  { type: "jewelry",     name: "Maang Tikka",           note: "Bridal headpiece",        src: "Real Images/Boutique/placeholders/tikka.svg" },
+  { type: "accessories", name: "Embroidered Dupatta",   note: "Mix and match",           src: "Real Images/Boutique/placeholders/dupatta.svg" },
+  { type: "accessories", name: "Potli Bag",             note: "Silk, beaded",            src: "Real Images/Boutique/placeholders/potli.svg" },
+  { type: "accessories", name: "Bindi Sets",            note: "Assorted designs",        src: "Real Images/Boutique/placeholders/bindi.svg" },
 ];
 
 // Reviews: Add/remove objects below
@@ -166,9 +174,14 @@ if (boutiqueGrid && boutiqueTabsEl) {
     (t) => t.id === 'all' || boutiqueItems.some((item) => item.type === t.id)
   );
 
+  // Stand-in artwork is decorative: the <h3> below already names the item, so
+  // announcing "Bridal Lehenga" over a mandala would just be wrong.
+  const isArtwork = (src) => src.includes('/placeholders/');
+
   const tileMarkup = ({ name, note, src }) => {
     const media = src
-      ? `<img src="${src}" alt="${name}" loading="lazy">`
+      ? `<img src="${src}" alt="${isArtwork(src) ? '' : name}" loading="lazy"
+              class="${isArtwork(src) ? 'is-artwork' : ''}">`
       : `<div class="boutique-tile-placeholder" aria-hidden="true">
            <span class="material-symbols-outlined">apparel</span>
            <span>Photo coming soon</span>
@@ -216,6 +229,10 @@ if (boutiqueGrid && boutiqueTabsEl) {
     const src = boutiqueCovers[img.dataset.boutiqueCover];
     if (src) {
       img.src = src;
+      if (isArtwork(src)) {
+        img.alt = '';
+        img.classList.add('is-artwork');
+      }
       return;
     }
     const ph = document.createElement('div');

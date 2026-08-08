@@ -2202,3 +2202,13 @@ img {
   .boutique-tile,
   .boutique-tile-media img { transition: none !important; }
 }
+
+/* Stand-in mandala artwork. It's drawn to a 3:4 canvas, so give it that box
+   rather than cropping the outer ring away — and skip the photo hover-zoom,
+   which would clip the border. Both revert automatically once a real photo
+   replaces the artwork, since the class only lands on placeholder images. */
+.service-card-media:has(.is-artwork),
+.boutique-tile-media:has(.is-artwork) { aspect-ratio: 3 / 4; }
+
+.service-card:hover .service-card-media img.is-artwork,
+.boutique-tile:hover .boutique-tile-media img.is-artwork { transform: none; }
