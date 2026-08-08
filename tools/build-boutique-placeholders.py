@@ -258,31 +258,55 @@ PRESETS = {
 
 # ------------------------------------------------------------- generation ---
 
-OUTER_N = [10, 12, 14, 16, 18, 20, 24]
-MID_N = [8, 10, 12, 14, 16]
-INNER_N = [6, 8, 10, 12]
+# Petal counts per density. Sparse reads as a few bold blades; dense reads as
+# lace. Both are the same construction, just different numbers.
+DENSITY = {
+    "sparse":   {"outer": [6, 8, 10], "mid": [6, 8], "inner": [5, 6],
+                 "outer_len": [32, 34, 36, 38], "mid_len": [30, 32, 34]},
+    "balanced": {"outer": [10, 12, 14, 16, 18, 20, 24], "mid": [8, 10, 12, 14, 16],
+                 "inner": [6, 8, 10, 12], "outer_len": [26, 28, 30, 32, 34, 36, 38],
+                 "mid_len": [26, 28, 30, 32, 34]},
+    "dense":    {"outer": [20, 24, 28, 32], "mid": [14, 16, 18, 20],
+                 "inner": [10, 12, 14], "outer_len": [22, 24, 26, 28],
+                 "mid_len": [22, 24, 26]},
+}
 
 
-def random_specs(count, seed, tone_names):
+def random_specs(count, seed, tone_names, density="balanced", border="mixed"):
     """Deterministic for a given seed — same seed, same artwork."""
     rng = random.Random(seed)
+    d = DENSITY[density]
     specs = []
     for i in range(count):
-        border = rng.choice(["scallop", "dots", "none"])
+        b = rng.choice(["scallop", "dots", "none"]) if border == "mixed" else border
         kw = {"shape": SHAPES[rng.choice(["petal", "leaf"])]}
-        if border == "scallop":
+        if b == "scallop":
             kw.update(scallop_n=rng.choice([18, 20, 22, 24, 28, 32]),
                       scallop_r=rng.choice([108, 110, 112, 113, 114, 116]))
-        elif border == "dots":
+        elif b == "dots":
             kw.update(dots_n=rng.choice([12, 14, 16, 18, 20, 24, 28]),
                       dots_r=rng.choice([110, 111, 112, 113, 116]))
-        spec = design(rng.choice(OUTER_N), rng.choice([88, 90, 92, 94, 96, 98, 100]),
-                      rng.choice([26, 28, 30, 32, 34, 36, 38]),
-                      rng.choice(MID_N), rng.choice([54, 56, 58, 60, 62, 64, 66]),
-                      rng.choice([26, 28, 30, 32, 34]),
-                      rng.choice(INNER_N), rng.choice([24, 26, 28, 30, 32]), **kw)
+        spec = design(rng.choice(d["outer"]), rng.choice([88, 90, 92, 94, 96, 98, 100]),
+                      rng.choice(d["outer_len"]),
+                      rng.choice(d["mid"]), rng.choice([54, 56, 58, 60, 62, 64, 66]),
+                      rng.choice(d["mid_len"]),
+                      rng.choice(d["inner"]), rng.choice([24, 26, 28, 30, 32]), **kw)
         specs.append((None, spec, tone_names[i % len(tone_names)]))
     return specs
+
+
+def wash_tone(tone, amount):
+    """Fade the line work toward the background.
+
+    At 0.85+ the mandala becomes a texture you can lay body copy over — which is
+    the usual need when it's a slide background rather than the subject.
+    """
+    if not amount:
+        return tone
+    bg = tone["bg0"]
+    return {**tone,
+            "ink": mix(tone["ink"], bg, amount),
+            "accent": mix(tone["accent"], bg, amount)}
 
 
 def main():
@@ -293,7 +317,9 @@ def main():
                "  %(prog)s\n"
                "  %(prog)s --out ./art --count 12 --palette palettes/royal-jade.json\n"
                "  %(prog)s --out ./art --count 6 --colors light=#F2F0E4,dark=#0A2E1F,accent=#E8B870\n"
-               "  %(prog)s --out ./bg --count 8 --size 1080x1350 --prefix slide\n")
+               "  %(prog)s --out ./bg --count 8 --size 1080x1350 --prefix slide\n"
+               "  %(prog)s --out ./bg --count 4 --size 1080x1350 --wash 0.88 \\\n"
+               "      --density dense --palette palettes/royal-jade.json\n")
     ap.add_argument("--preset", choices=sorted(PRESETS),
                     help="a built-in design set (default: henna, when no other options given)")
     ap.add_argument("--out", help="output directory")
@@ -303,6 +329,13 @@ def main():
     ap.add_argument("--size", default=f"{DEF_W}x{DEF_H}", help="canvas WxH (default 300x400)")
     ap.add_argument("--prefix", default="mandala", help="output filename prefix")
     ap.add_argument("--seed", type=int, default=7, help="same seed reproduces the same artwork")
+    ap.add_argument("--density", choices=sorted(DENSITY), default="balanced",
+                    help="how many petals: sparse reads bold, dense reads like lace")
+    ap.add_argument("--border", choices=["scallop", "dots", "none", "mixed"],
+                    default="mixed", help="outer border treatment")
+    ap.add_argument("--wash", type=float, default=0.0, metavar="0..1",
+                    help="fade line work toward the background; 0.85+ makes a "
+                         "texture you can put text on top of")
     ap.add_argument("--names", help="comma-separated filenames, used instead of prefix-NN")
     ap.add_argument("--list-presets", action="store_true")
     args = ap.parse_args()
@@ -353,7 +386,8 @@ def main():
         if not args.out:
             ap.error("--out is required when not using a preset")
         out = args.out
-        specs = random_specs(args.count or 6, args.seed, list(tones))
+        specs = random_specs(args.count or 6, args.seed, list(tones),
+                             args.density, args.border)
 
     names = args.names.split(",") if args.names else None
     os.makedirs(out, exist_ok=True)
@@ -363,7 +397,7 @@ def main():
               else name or f"{args.prefix}-{i + 1:02d}")
         fn = fn if fn.endswith(".svg") else fn + ".svg"
         with open(os.path.join(out, fn), "w") as f:
-            f.write(build(spec, tones[tone_name], w, h))
+            f.write(build(spec, wash_tone(tones[tone_name], args.wash), w, h))
         written.append(fn)
 
     print(f"wrote {len(written)} mandala{'s' if len(written) != 1 else ''} "
