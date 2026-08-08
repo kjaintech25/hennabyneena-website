@@ -9,14 +9,54 @@
 // - alt: accessibility description (image number is appended automatically)
 // To add photos: drop <id>-NN.webp in the folder and bump count.
 const galleryCollections = [
-  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 16, alt: "Bridal mehndi design by Neena Jain" },
+  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 15, alt: "Bridal mehndi design by Neena Jain" },
   { id: "feet",    dir: "Real Images/Gallery/feet",    count: 15, alt: "Feet mehndi design by Neena Jain" },
-  { id: "stylish", dir: "Real Images/Gallery/stylish", count: 17, alt: "Stylish henna design by Neena Jain" },
+  { id: "stylish", dir: "Real Images/Gallery/stylish", count: 16, alt: "Stylish henna design by Neena Jain" },
   { id: "party",   dir: "Real Images/Gallery/party",   count: 18, alt: "Party henna design by Neena Jain" },
-  { id: "guest",   dir: "Real Images/Gallery/guest",   count: 13, alt: "Event guest henna by Neena Jain" },
-  { id: "family",  dir: "Real Images/Gallery/family",  count: 15, alt: "Family henna by Neena Jain" },
+  { id: "guest",   dir: "Real Images/Gallery/guest",   count: 12, alt: "Event guest henna by Neena Jain" },
+  { id: "family",  dir: "Real Images/Gallery/family",  count: 14, alt: "Family henna by Neena Jain" },
   { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 23, alt: "Jagua body art by Neena Jain" },
-  { id: "white",   dir: "Real Images/Gallery/white",   count: 4,  alt: "White henna design by Neena Jain" },
+];
+
+// Boutique (boutique.html): Neena's traditional Indian clothing & jewelry.
+// - boutiqueTabs: the filter row. "all" is special-cased to show everything.
+// - boutiqueItems: one entry per piece. `type` must match a tab id.
+// - boutiqueCovers: the photo on each of the three headline cards.
+// Drop photos in Real Images/Boutique/<type>/ and point `src` at them. Any item
+// left with an empty `src` renders as a labelled placeholder tile, so the page
+// is reviewable before the real photos exist.
+const boutiqueTabs = [
+  { id: "all",         label: "All" },
+  { id: "sarees",      label: "Sarees" },
+  { id: "lehengas",    label: "Lehengas" },
+  { id: "suits",       label: "Suits & Kurtis" },
+  { id: "jewelry",     label: "Jewelry" },
+  { id: "accessories", label: "Accessories" },
+];
+
+const boutiqueCovers = {
+  clothing:    "",
+  jewelry:     "",
+  accessories: "",
+};
+
+// PLACEHOLDERS — replace names/notes with the real pieces and add `src` paths.
+const boutiqueItems = [
+  { type: "sarees",      name: "Banarasi Silk Saree",   note: "Gold zari border",        src: "" },
+  { type: "sarees",      name: "Georgette Saree",       note: "Lightweight, everyday",   src: "" },
+  { type: "sarees",      name: "Embroidered Saree",     note: "Party wear",              src: "" },
+  { type: "lehengas",    name: "Bridal Lehenga",        note: "Heavy hand embroidery",   src: "" },
+  { type: "lehengas",    name: "Festive Lehenga",       note: "Sangeet & garba",         src: "" },
+  { type: "suits",       name: "Anarkali Suit",         note: "Full-length, flared",     src: "" },
+  { type: "suits",       name: "Punjabi Salwar Suit",   note: "Cotton, everyday",        src: "" },
+  { type: "suits",       name: "Printed Kurti",         note: "Casual wear",             src: "" },
+  { type: "jewelry",     name: "Bridal Necklace Set",   note: "Necklace + earrings",     src: "" },
+  { type: "jewelry",     name: "Jhumka Earrings",       note: "Several colours",         src: "" },
+  { type: "jewelry",     name: "Bangle Set",            note: "Sized to order",          src: "" },
+  { type: "jewelry",     name: "Maang Tikka",           note: "Bridal headpiece",        src: "" },
+  { type: "accessories", name: "Embroidered Dupatta",   note: "Mix and match",           src: "" },
+  { type: "accessories", name: "Potli Bag",             note: "Silk, beaded",            src: "" },
+  { type: "accessories", name: "Bindi Sets",            note: "Assorted designs",        src: "" },
 ];
 
 // Reviews: Add/remove objects below
@@ -111,6 +151,79 @@ function hydrateWindow(swiper) {
     const i = ((swiper.activeIndex + offset) % n + n) % n;
     hydrate(slides[i] && slides[i].querySelector('img'));
   }
+}
+
+// ========================================
+// Boutique — tab-filtered grid (boutique.html only)
+// ========================================
+
+const boutiqueGrid = document.getElementById('boutiqueGrid');
+const boutiqueTabsEl = document.getElementById('boutiqueTabs');
+
+if (boutiqueGrid && boutiqueTabsEl) {
+  // A tab with nothing behind it is a dead end — only offer ones that have stock.
+  const stocked = boutiqueTabs.filter(
+    (t) => t.id === 'all' || boutiqueItems.some((item) => item.type === t.id)
+  );
+
+  const tileMarkup = ({ name, note, src }) => {
+    const media = src
+      ? `<img src="${src}" alt="${name}" loading="lazy">`
+      : `<div class="boutique-tile-placeholder" aria-hidden="true">
+           <span class="material-symbols-outlined">apparel</span>
+           <span>Photo coming soon</span>
+         </div>`;
+    return `
+      <article class="boutique-tile">
+        <div class="boutique-tile-media">${media}</div>
+        <div class="boutique-tile-body">
+          <h3>${name}</h3>
+          ${note ? `<p>${note}</p>` : ''}
+        </div>
+      </article>
+    `;
+  };
+
+  function renderBoutique(type) {
+    const items = type === 'all' ? boutiqueItems : boutiqueItems.filter((i) => i.type === type);
+    boutiqueGrid.innerHTML = items.map(tileMarkup).join('');
+  }
+
+  stocked.forEach((tab, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'boutique-tab' + (i === 0 ? ' is-active' : '');
+    btn.type = 'button';
+    btn.role = 'tab';
+    btn.setAttribute('aria-selected', String(i === 0));
+    btn.dataset.type = tab.id;
+    btn.textContent = tab.label;
+    btn.addEventListener('click', () => {
+      boutiqueTabsEl.querySelectorAll('.boutique-tab').forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', String(on));
+      });
+      renderBoutique(tab.id);
+    });
+    boutiqueTabsEl.appendChild(btn);
+  });
+
+  renderBoutique(stocked[0] ? stocked[0].id : 'all');
+
+  // Headline cards: swap in a cover photo, or show the same placeholder the
+  // tiles use rather than a broken image icon.
+  document.querySelectorAll('[data-boutique-cover]').forEach((img) => {
+    const src = boutiqueCovers[img.dataset.boutiqueCover];
+    if (src) {
+      img.src = src;
+      return;
+    }
+    const ph = document.createElement('div');
+    ph.className = 'boutique-tile-placeholder';
+    ph.setAttribute('aria-hidden', 'true');
+    ph.innerHTML = '<span class="material-symbols-outlined">apparel</span><span>Photo coming soon</span>';
+    img.replaceWith(ph);
+  });
 }
 
 const reviewsWrapper = document.getElementById('reviewsWrapper');

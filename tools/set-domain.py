@@ -3,7 +3,7 @@
 
     python3 tools/set-domain.py https://hennabyneenajain.com
 
-Rewrites every hardcoded base URL across the four HTML pages, sitemap.xml and
+Rewrites every hardcoded base URL across the five HTML pages, sitemap.xml and
 robots.txt. Those absolute URLs live in:
   - <link rel="canonical">
   - og:url, og:image, twitter:image
@@ -22,7 +22,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.dirname(HERE)
 
-FILES = ["index.html", "gallery.html", "faq.html", "book.html",
+FILES = ["index.html", "gallery.html", "boutique.html", "faq.html", "book.html",
          "sitemap.xml", "robots.txt"]
 
 # Matches any scheme://host(/path) we've previously used as the base.

@@ -28,7 +28,6 @@ JOBS = [
     ("Guest Henna", "guest"),
     ("Family Henna", "family"),
     ("Jagua Henna Carousel", "jagua"),
-    ("White Henna", "white"),
 ]
 
 MAX_EDGE = 1200
@@ -63,6 +62,17 @@ REASSIGN = {
     "InShot_20250506_230413023.jpg": "feet",
     "InShot_20250511_212523917.jpg": "feet",
     "InShot_20250527_222335911.jpg": "feet",
+}
+
+# Photos Neena pulled from the site — each was a second shot of a design that
+# already appears in the same carousel, so the pair read as a duplicate
+# (2026-08-08). The originals are still in the source folders, so without this
+# skip list a rebuild would put them straight back.
+SKIP = {
+    "InShot_20260525_200320004.jpg",  # was bridal-10, dupe of bridal-09
+    "InShot_20260802_165618832.jpg",  # was guest-07,  dupe of guest-03
+    "InShot_20260630_222610801.jpg",  # was family-15, dupe of family-14
+    "InShot_20260630_222514276.jpg",  # was stylish-15, dupe of stylish-11
 }
 
 EXTS = (".jpg", ".jpeg", ".png", ".heic", ".webp")
@@ -116,6 +126,8 @@ for src_dir, slug in JOBS:
             if n.lower().endswith(EXTS):
                 found.append(os.path.join(root, n))
     for p in sorted(found, key=lambda x: os.path.basename(x)):
+        if os.path.basename(p) in SKIP:
+            continue
         dest = REASSIGN.get(os.path.basename(p))
         (incoming[dest] if dest else native[slug]).append(p)
 
