@@ -3,19 +3,22 @@
 // ========================================
 
 // Gallery carousels: one entry per carousel on gallery.html
-// - id: must match the data-collection attribute on the markup block
+// - id: must match the data-collection attribute on the markup block AND the
+//   key in gallery-data.js
 // - dir: folder holding the images
-// - count: how many images, named <id>-01.webp … <id>-NN.webp
 // - alt: accessibility description (image number is appended automatically)
-// To add photos: drop <id>-NN.webp in the folder and bump count.
+//
+// Counts and pixel sizes are NOT listed here — they come from gallery-data.js,
+// which tools/build-gallery.py regenerates. Add or remove photos by rerunning
+// that script; nothing in this file needs touching.
 const galleryCollections = [
-  { id: "bridal",  dir: "Real Images/Gallery/bridal",  count: 15, alt: "Bridal mehndi design by Neena Jain" },
-  { id: "feet",    dir: "Real Images/Gallery/feet",    count: 15, alt: "Feet mehndi design by Neena Jain" },
-  { id: "stylish", dir: "Real Images/Gallery/stylish", count: 16, alt: "Stylish henna design by Neena Jain" },
-  { id: "party",   dir: "Real Images/Gallery/party",   count: 18, alt: "Party henna design by Neena Jain" },
-  { id: "guest",   dir: "Real Images/Gallery/guest",   count: 12, alt: "Event guest henna by Neena Jain" },
-  { id: "family",  dir: "Real Images/Gallery/family",  count: 14, alt: "Family henna by Neena Jain" },
-  { id: "jagua",   dir: "Real Images/Gallery/jagua",   count: 23, alt: "Jagua body art by Neena Jain" },
+  { id: "bridal",  dir: "Real Images/Gallery/bridal",  alt: "Bridal mehndi design by Neena Jain" },
+  { id: "feet",    dir: "Real Images/Gallery/feet",    alt: "Feet mehndi design by Neena Jain" },
+  { id: "stylish", dir: "Real Images/Gallery/stylish", alt: "Stylish henna design by Neena Jain" },
+  { id: "party",   dir: "Real Images/Gallery/party",   alt: "Party henna design by Neena Jain" },
+  { id: "guest",   dir: "Real Images/Gallery/guest",   alt: "Event guest henna by Neena Jain" },
+  { id: "family",  dir: "Real Images/Gallery/family",  alt: "Family henna by Neena Jain" },
+  { id: "jagua",   dir: "Real Images/Gallery/jagua",   alt: "Jagua body art by Neena Jain" },
 ];
 
 // Boutique (boutique.html): Neena's traditional Indian clothing & jewelry.
@@ -97,11 +100,15 @@ const reviews = [
 // shows the same photos round and round anyway.
 const MIN_SLIDES_FOR_LOOP = 8;
 
-galleryCollections.forEach(({ id, dir, count, alt }) => {
+galleryCollections.forEach(({ id, dir, alt }) => {
   const block = document.querySelector(`.gallery-collection[data-collection="${id}"]`);
   if (!block) return;
   const wrapper = block.querySelector('.gallery-wrapper');
   if (!wrapper) return;
+
+  const sizes = (typeof galleryData !== 'undefined' && galleryData[id]) || [];
+  const count = sizes.length;
+  if (!count) return;
 
   const total = count < MIN_SLIDES_FOR_LOOP
     ? Math.ceil(MIN_SLIDES_FOR_LOOP / count) * count
@@ -111,14 +118,19 @@ galleryCollections.forEach(({ id, dir, count, alt }) => {
     const n = (i % count) + 1;
     const isRepeat = i >= count;
     const src = `${dir}/${id}-${String(n).padStart(2, '0')}.webp`;
+    const [w, h] = sizes[n - 1];
     const slide = document.createElement('div');
     slide.className = 'swiper-slide';
-    // src is withheld until the slide is actually needed — see hydrateWindow().
-    // Native loading="lazy" can't be used here; it's unreliable inside a Swiper
-    // (see CLAUDE_MEMORY.md), so the loading window is managed explicitly.
-    slide.innerHTML = isRepeat
-      ? `<img data-src="${src}" alt="" aria-hidden="true" decoding="async">`
-      : `<img data-src="${src}" alt="${alt} (${n} of ${count})" decoding="async">`;
+    // width/height are the real pixel dimensions, so each slide reserves space
+    // in the photo's own shape before the image arrives. Without them the
+    // slides would collapse to nothing, since src is withheld until the slide
+    // is needed — see hydrateWindow(). Native loading="lazy" can't be used
+    // here; it's unreliable inside a Swiper (see CLAUDE_MEMORY.md).
+    const label = isRepeat
+      ? 'alt="" aria-hidden="true"'
+      : `alt="${alt} (${n} of ${count})"`;
+    slide.innerHTML =
+      `<img data-src="${src}" ${label} width="${w}" height="${h}" decoding="async">`;
     wrapper.appendChild(slide);
   }
 });

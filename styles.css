@@ -937,27 +937,39 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   overflow: hidden;
 }
 
+/* Slides size themselves to each photo instead of forcing every photo into one
+   box. The height is fixed and the width follows the image's own proportions,
+   so nothing is ever cropped — a tall photo just makes a narrow slide and a
+   wide one makes a wide slide. The previous fixed 400x420 box with
+   object-fit: cover was cutting up to half the image off tall shots. */
 .portfolio-swiper .swiper-slide {
-  width: 80vw;
+  width: auto;
   height: auto;
   flex-shrink: 0;
 }
 
 .portfolio-swiper .swiper-slide img {
-  width: 100%;
+  width: auto;
   height: 360px;
-  object-fit: cover;
-  /* Slides load on demand, so give one that hasn't arrived yet a soft tint
-     rather than a bright empty box, then fade the photo in over it.
-     Safe to default to transparent: script.js creates these <img> elements,
-     so if it never runs there are no slides to hide. */
-  background: rgba(255,255,255,0.05);
+  max-width: 84vw;
+  /* contain, not cover: if max-width clamps a wide shot on a narrow screen,
+     letterbox it rather than crop it */
+  object-fit: contain;
   opacity: 0;
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255,255,255,0.12);
   transform: translateZ(0);
   transition: transform 0.6s ease, box-shadow 0.6s ease, opacity 0.55s ease;
+}
+
+/* A slide that hasn't loaded yet gets a soft tint so it reads as a pending
+   photo rather than a hole. Once loaded the background goes transparent, so a
+   letterboxed wide shot shows the section colour in the gaps instead of bars.
+   Safe to default to opacity 0: script.js creates these <img> elements, so if
+   it never runs there are no slides to hide. */
+.portfolio-swiper .swiper-slide img:not(.is-loaded) {
+  background: rgba(255,255,255,0.05);
 }
 
 .portfolio-swiper .swiper-slide img.is-loaded { opacity: 1; }
@@ -991,8 +1003,7 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
   .portfolio.has-page-header { padding-top: var(--section-padding-desktop); }
   .carousel-item { width: 400px; }
   .carousel-item img { height: 420px; }
-  .portfolio-swiper .swiper-slide { width: 400px; }
-  .portfolio-swiper .swiper-slide img { height: 420px; }
+  .portfolio-swiper .swiper-slide img { height: 460px; max-width: 70vw; }
 }
 
 /* ==========================================================================
