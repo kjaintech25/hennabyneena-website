@@ -38,9 +38,7 @@ const galleryCollections = [
 // back to a "photo coming soon" tile.
 const boutiqueTabs = [
   { id: "all",         label: "All" },
-  { id: "sarees",      label: "Sarees" },
-  { id: "lehengas",    label: "Lehengas" },
-  { id: "suits",       label: "Suits & Kurtis" },
+  { id: "clothing",    label: "Clothing" },
   { id: "jewelry",     label: "Jewelry" },
   { id: "accessories", label: "Accessories" },
 ];
@@ -51,23 +49,28 @@ const boutiqueCovers = {
   accessories: "Real Images/Boutique/placeholders/cover-accessories.svg",
 };
 
-// PLACEHOLDER NAMES — swap these for the pieces Neena actually carries.
+// These are Neena's own categories. Each tile is a TYPE she carries, not an
+// individual piece — stock changes constantly, so listing single items would
+// go stale immediately. `type` must match a tab id above.
 const boutiqueItems = [
-  { type: "sarees",      name: "Banarasi Silk Saree",   note: "Gold zari border",        src: "Real Images/Boutique/placeholders/saree-01.svg" },
-  { type: "sarees",      name: "Georgette Saree",       note: "Lightweight, everyday",   src: "Real Images/Boutique/placeholders/saree-02.svg" },
-  { type: "sarees",      name: "Embroidered Saree",     note: "Party wear",              src: "Real Images/Boutique/placeholders/saree-03.svg" },
-  { type: "lehengas",    name: "Bridal Lehenga",        note: "Heavy hand embroidery",   src: "Real Images/Boutique/placeholders/lehenga-01.svg" },
-  { type: "lehengas",    name: "Festive Lehenga",       note: "Sangeet & garba",         src: "Real Images/Boutique/placeholders/lehenga-02.svg" },
-  { type: "suits",       name: "Anarkali Suit",         note: "Full-length, flared",     src: "Real Images/Boutique/placeholders/anarkali.svg" },
-  { type: "suits",       name: "Punjabi Salwar Suit",   note: "Cotton, everyday",        src: "Real Images/Boutique/placeholders/salwar.svg" },
-  { type: "suits",       name: "Printed Kurti",         note: "Casual wear",             src: "Real Images/Boutique/placeholders/kurti.svg" },
-  { type: "jewelry",     name: "Bridal Necklace Set",   note: "Necklace + earrings",     src: "Real Images/Boutique/placeholders/necklace.svg" },
-  { type: "jewelry",     name: "Jhumka Earrings",       note: "Several colours",         src: "Real Images/Boutique/placeholders/jhumka.svg" },
-  { type: "jewelry",     name: "Bangle Set",            note: "Sized to order",          src: "Real Images/Boutique/placeholders/bangles.svg" },
-  { type: "jewelry",     name: "Maang Tikka",           note: "Bridal headpiece",        src: "Real Images/Boutique/placeholders/tikka.svg" },
-  { type: "accessories", name: "Embroidered Dupatta",   note: "Mix and match",           src: "Real Images/Boutique/placeholders/dupatta.svg" },
-  { type: "accessories", name: "Potli Bag",             note: "Silk, beaded",            src: "Real Images/Boutique/placeholders/potli.svg" },
-  { type: "accessories", name: "Bindi Sets",            note: "Assorted designs",        src: "Real Images/Boutique/placeholders/bindi.svg" },
+  // Clothing
+  { type: "clothing",    name: "Lehengas",         note: "Bridal through to festive",   src: "Real Images/Boutique/placeholders/lehengas.svg" },
+  { type: "clothing",    name: "Sarees",           note: "Designer and everyday",       src: "Real Images/Boutique/placeholders/sarees.svg" },
+  { type: "clothing",    name: "Dresses",          note: "Occasion and daywear",        src: "Real Images/Boutique/placeholders/dresses.svg" },
+  { type: "clothing",    name: "Indo-Western",     note: "Traditional meets modern",    src: "Real Images/Boutique/placeholders/indo-western.svg" },
+  { type: "clothing",    name: "Partywear",        note: "For sangeets and receptions", src: "Real Images/Boutique/placeholders/partywear.svg" },
+  { type: "clothing",    name: "Blouses",          note: "Ready-made and custom",       src: "Real Images/Boutique/placeholders/blouses.svg" },
+  { type: "clothing",    name: "Dupattas",         note: "Mix and match",               src: "Real Images/Boutique/placeholders/dupattas.svg" },
+  // Jewelry
+  { type: "jewelry",     name: "Gold-Plated",      note: "High-polish finish",          src: "Real Images/Boutique/placeholders/gold-plated.svg" },
+  { type: "jewelry",     name: "Semi-Precious",    note: "Natural stone settings",      src: "Real Images/Boutique/placeholders/semi-precious.svg" },
+  { type: "jewelry",     name: "Oxidized",         note: "Antique silver tone",         src: "Real Images/Boutique/placeholders/oxidized.svg" },
+  // Accessories
+  { type: "accessories", name: "Earrings",         note: "Studs to statement jhumkas",  src: "Real Images/Boutique/placeholders/earrings.svg" },
+  { type: "accessories", name: "Rings",            note: "Everyday and occasion",       src: "Real Images/Boutique/placeholders/rings.svg" },
+  { type: "accessories", name: "Ring Bracelets",   note: "Hand harness style",          src: "Real Images/Boutique/placeholders/ring-bracelets.svg" },
+  { type: "accessories", name: "Anklets",          note: "Single and pairs",            src: "Real Images/Boutique/placeholders/anklets.svg" },
+  { type: "accessories", name: "Bangles & Kadas",  note: "Sized to order",              src: "Real Images/Boutique/placeholders/bangles-kadas.svg" },
 ];
 
 // Reviews: Add/remove objects below

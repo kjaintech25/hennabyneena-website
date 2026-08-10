@@ -2072,6 +2072,25 @@ img {
 
 /* The headline cards sit directly under the page header, so the section's own
    top padding would double up on it. */
+/* Neena's account of the boutique. Reuses the homepage About typography
+   (.quote-block / .about-quote / .about-bio) in a single readable column
+   instead of the two-column portrait layout. */
+.boutique-story {
+  padding: var(--section-padding-mobile) var(--gutter);
+  background: var(--color-background);
+}
+
+.boutique-story-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.boutique-story .about-bio:last-child { margin-bottom: 0; }
+
+@media (min-width: 768px) {
+  .boutique-story { padding: var(--section-padding-desktop) var(--gutter); }
+}
+
 .boutique-intro { padding-top: 0; }
 
 /* Card covers stand in for photos too, so the inverted card needs light text. */
@@ -2092,7 +2111,7 @@ img {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   margin: 0 0 24px;
 }
 
@@ -2101,7 +2120,9 @@ img {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  padding: 9px 18px;
+  /* Tight enough that all four fit one row on a 375px screen; roomier above */
+  padding: 9px 12px;
+  white-space: nowrap;
   border-radius: var(--radius-full);
   border: 1px solid var(--color-outline-variant);
   background: transparent;
@@ -2200,6 +2221,8 @@ img {
 @media (min-width: 768px) {
   .boutique { padding: var(--section-padding-desktop) 0; }
   .boutique-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .boutique-tabs { gap: 8px; }
+  .boutique-tab { padding: 9px 18px; }
   .boutique-tile { border-radius: var(--radius-2xl); }
   .boutique-tile-body { padding: 14px 18px 20px; }
   .boutique-tile-body h3 { font-size: 19px; }

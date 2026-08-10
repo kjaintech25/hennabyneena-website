@@ -224,22 +224,29 @@ def build(spec, tone, w=DEF_W, h=DEF_H):
 
 # The 18 designs shipping on hennabyneenajain.com/boutique.html. Explicit rather
 # than generated so the live artwork can be rebuilt bit-for-bit.
+# One design per type in Neena's boutique list — the tiles on boutique.html are
+# the types themselves, so each needs its own artwork. Slugs match the `src`
+# values in script.js.
 HENNA_SPECS = [
-    ("saree-01",   design(16, 96, 30, 10, 62, 30, 8, 30, scallop_n=24, scallop_r=112), "light"),
-    ("saree-02",   design(12, 92, 34, 8, 58, 32, 6, 28, dots_n=18, dots_r=110), "warm"),
-    ("saree-03",   design(20, 98, 26, 12, 64, 28, 10, 26, scallop_n=20, scallop_r=114, shape=leaf), "deep"),
-    ("lehenga-01", design(14, 94, 32, 10, 60, 30, 8, 28, dots_n=14, dots_r=112), "warm"),
-    ("lehenga-02", design(18, 96, 28, 12, 62, 26, 6, 30, scallop_n=18, scallop_r=113), "light"),
-    ("anarkali",   design(12, 90, 36, 8, 56, 34, 8, 26, scallop_n=24, scallop_r=110, shape=leaf), "light"),
-    ("salwar",     design(16, 94, 30, 10, 60, 28, 10, 24, dots_n=16, dots_r=112), "deep"),
-    ("kurti",      design(10, 88, 38, 8, 54, 32, 6, 28, scallop_n=20, scallop_r=108), "light"),
-    ("necklace",   design(18, 96, 28, 12, 62, 28, 8, 30, dots_n=24, dots_r=113), "warm"),
-    ("jhumka",     design(14, 92, 32, 10, 58, 30, 10, 26, scallop_n=22, scallop_r=110, shape=leaf), "light"),
-    ("bangles",    design(20, 98, 26, 14, 64, 26, 8, 28, scallop_n=28, scallop_r=114), "deep"),
-    ("tikka",      design(12, 90, 34, 8, 56, 32, 6, 30, dots_n=12, dots_r=110), "warm"),
-    ("dupatta",    design(16, 94, 30, 10, 60, 30, 8, 26, scallop_n=20, scallop_r=112, shape=leaf), "light"),
-    ("potli",      design(14, 92, 32, 12, 58, 28, 10, 28, dots_n=20, dots_r=111), "deep"),
-    ("bindi",      design(18, 96, 28, 10, 62, 30, 6, 26, scallop_n=24, scallop_r=113), "warm"),
+    # Clothing
+    ("lehengas",      design(14, 94, 32, 10, 60, 30, 8, 28, dots_n=14, dots_r=112), "warm"),
+    ("sarees",        design(16, 96, 30, 10, 62, 30, 8, 30, scallop_n=24, scallop_r=112), "light"),
+    ("dresses",       design(12, 92, 34, 8, 58, 32, 6, 28, dots_n=18, dots_r=110), "deep"),
+    ("indo-western",  design(20, 98, 26, 12, 64, 28, 10, 26, scallop_n=20, scallop_r=114, shape=leaf), "light"),
+    ("partywear",     design(18, 96, 28, 12, 62, 26, 6, 30, scallop_n=18, scallop_r=113), "warm"),
+    ("blouses",       design(10, 88, 38, 8, 54, 32, 6, 28, scallop_n=20, scallop_r=108), "deep"),
+    ("dupattas",      design(16, 94, 30, 10, 60, 30, 8, 26, scallop_n=20, scallop_r=112, shape=leaf), "light"),
+    # Jewelry
+    ("gold-plated",   design(18, 96, 28, 12, 62, 28, 8, 30, dots_n=24, dots_r=113), "warm"),
+    ("semi-precious", design(14, 92, 32, 10, 58, 30, 10, 26, scallop_n=22, scallop_r=110, shape=leaf), "light"),
+    ("oxidized",      design(20, 98, 26, 14, 64, 26, 8, 28, scallop_n=28, scallop_r=114), "deep"),
+    # Accessories
+    ("earrings",      design(12, 90, 34, 8, 56, 32, 6, 30, dots_n=12, dots_r=110), "light"),
+    ("rings",         design(16, 94, 30, 10, 60, 28, 10, 24, dots_n=16, dots_r=112), "warm"),
+    ("ring-bracelets", design(12, 90, 36, 8, 56, 34, 8, 26, scallop_n=24, scallop_r=110, shape=leaf), "deep"),
+    ("anklets",       design(14, 92, 32, 12, 58, 28, 10, 28, dots_n=20, dots_r=111), "light"),
+    ("bangles-kadas", design(18, 96, 28, 10, 62, 30, 6, 26, scallop_n=24, scallop_r=113), "warm"),
+    # The three headline cards at the top of the page
     ("cover-clothing",    design(24, 100, 30, 16, 66, 30, 12, 30, scallop_n=32, scallop_r=116), "light"),
     ("cover-jewelry",     design(20, 100, 32, 14, 66, 32, 10, 32, dots_n=28, dots_r=116), "warm"),
     ("cover-accessories", design(24, 100, 28, 16, 66, 28, 12, 28, scallop_n=28, scallop_r=116, shape=leaf), "deep"),
