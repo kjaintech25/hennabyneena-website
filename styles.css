@@ -2091,6 +2091,25 @@ img {
   .boutique-story { padding: var(--section-padding-desktop) var(--gutter); }
 }
 
+/* Wide screens: let the quote run the full measure and set the body in two
+   columns underneath. Uses the width available instead of a single tall
+   ribbon, while keeping each line ~65 characters — a single 1000px-wide
+   column at 15px would be nearer 120 and painful to read. */
+@media (min-width: 900px) {
+  .boutique-story-inner { max-width: 1000px; }
+
+  .boutique-story-body {
+    columns: 2;
+    column-gap: 56px;
+  }
+
+  /* Keep a paragraph whole rather than splitting it across the fold */
+  .boutique-story-body .about-bio {
+    break-inside: avoid;
+    margin-bottom: 18px;
+  }
+}
+
 .boutique-intro { padding-top: 0; }
 
 /* Card covers stand in for photos too, so the inverted card needs light text. */
