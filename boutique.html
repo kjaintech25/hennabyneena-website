@@ -145,6 +145,116 @@
       </div>
     </section>
 
+
+    <!-- Real photos of current stock. Carousels reuse the gallery component
+         (.gallery-collection + .portfolio-swiper); .is-light recolours it for
+         this page's cream background. -->
+    <section class="portfolio is-light boutique-rail" id="rail">
+      <div class="container">
+        <div class="services-header">
+          <span class="eyebrow">In Stock Now</span>
+          <h2 class="section-title">Recent Pieces</h2>
+          <div class="ornament" aria-hidden="true"><span class="ornament-dot"></span></div>
+        </div>
+
+        <div class="gallery-collection" data-collection="partywear-bridal">
+          <div class="portfolio-header">
+            <div>
+              <span class="eyebrow">Showpieces</span>
+              <h3 class="section-title">Partywear &amp; Bridal</h3>
+            </div>
+            <div class="portfolio-nav">
+              <button class="prev gallery-prev" aria-label="Previous partywear and bridal photo"><span class="material-symbols-outlined">chevron_left</span></button>
+              <button class="next gallery-next" aria-label="Next partywear and bridal photo"><span class="material-symbols-outlined">chevron_right</span></button>
+            </div>
+          </div>
+          <div class="swiper portfolio-swiper">
+            <div class="swiper-wrapper gallery-wrapper">
+              <!-- Populated by script.js -->
+            </div>
+            <div class="swiper-pagination gallery-pagination"></div>
+          </div>
+        </div>
+
+        <div class="gallery-collection" data-collection="suits-dresses">
+          <div class="portfolio-header">
+            <div>
+              <span class="eyebrow">Everyday to Occasion</span>
+              <h3 class="section-title">Suits &amp; Dresses</h3>
+            </div>
+            <div class="portfolio-nav">
+              <button class="prev gallery-prev" aria-label="Previous suits and dresses photo"><span class="material-symbols-outlined">chevron_left</span></button>
+              <button class="next gallery-next" aria-label="Next suits and dresses photo"><span class="material-symbols-outlined">chevron_right</span></button>
+            </div>
+          </div>
+          <div class="swiper portfolio-swiper">
+            <div class="swiper-wrapper gallery-wrapper">
+              <!-- Populated by script.js -->
+            </div>
+            <div class="swiper-pagination gallery-pagination"></div>
+          </div>
+        </div>
+
+        <div class="gallery-collection" data-collection="blouses-rail">
+          <div class="portfolio-header">
+            <div>
+              <span class="eyebrow">Ready-Made &amp; Custom</span>
+              <h3 class="section-title">Blouses</h3>
+            </div>
+            <div class="portfolio-nav">
+              <button class="prev gallery-prev" aria-label="Previous blouses photo"><span class="material-symbols-outlined">chevron_left</span></button>
+              <button class="next gallery-next" aria-label="Next blouses photo"><span class="material-symbols-outlined">chevron_right</span></button>
+            </div>
+          </div>
+          <div class="swiper portfolio-swiper">
+            <div class="swiper-wrapper gallery-wrapper">
+              <!-- Populated by script.js -->
+            </div>
+            <div class="swiper-pagination gallery-pagination"></div>
+          </div>
+        </div>
+
+        <div class="gallery-collection" data-collection="jewelry-rail">
+          <div class="portfolio-header">
+            <div>
+              <span class="eyebrow">Gold-Plated, Semi-Precious &amp; Oxidized</span>
+              <h3 class="section-title">Jewelry</h3>
+            </div>
+            <div class="portfolio-nav">
+              <button class="prev gallery-prev" aria-label="Previous jewelry photo"><span class="material-symbols-outlined">chevron_left</span></button>
+              <button class="next gallery-next" aria-label="Next jewelry photo"><span class="material-symbols-outlined">chevron_right</span></button>
+            </div>
+          </div>
+          <div class="swiper portfolio-swiper">
+            <div class="swiper-wrapper gallery-wrapper">
+              <!-- Populated by script.js -->
+            </div>
+            <div class="swiper-pagination gallery-pagination"></div>
+          </div>
+        </div>
+
+        <div class="gallery-collection" data-collection="accessories-rail">
+          <div class="portfolio-header">
+            <div>
+              <span class="eyebrow">The Finishing Touches</span>
+              <h3 class="section-title">Accessories</h3>
+            </div>
+            <div class="portfolio-nav">
+              <button class="prev gallery-prev" aria-label="Previous accessories photo"><span class="material-symbols-outlined">chevron_left</span></button>
+              <button class="next gallery-next" aria-label="Next accessories photo"><span class="material-symbols-outlined">chevron_right</span></button>
+            </div>
+          </div>
+          <div class="swiper portfolio-swiper">
+            <div class="swiper-wrapper gallery-wrapper">
+              <!-- Populated by script.js -->
+            </div>
+            <div class="swiper-pagination gallery-pagination"></div>
+          </div>
+        </div>
+        <p class="boutique-note">A sample of current stock &mdash; new pieces arrive often. <a href="book.html">Ask what&rsquo;s available</a>.</p>
+      </div>
+    </section>
+
     <!-- Tabbed gallery — tabs and tiles are built by script.js from boutiqueCategories -->
     <section class="boutique" id="boutique-gallery">
       <div class="container">
@@ -219,6 +329,8 @@
   </a>
 
   <script src="vendor/swiper-bundle.min.js"></script>
+  <!-- Generated by tools/build-boutique-photos.py; must load before script.js -->
+  <script src="boutique-data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

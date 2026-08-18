@@ -19,6 +19,15 @@ const galleryCollections = [
   { id: "guest",   dir: "Real Images/Gallery/guest",   alt: "Event guest henna by Neena Jain" },
   { id: "family",  dir: "Real Images/Gallery/family",  alt: "Family henna by Neena Jain" },
   { id: "jagua",   dir: "Real Images/Gallery/jagua",   alt: "Jagua body art by Neena Jain" },
+
+  // Boutique rails (boutique.html). Same machinery — the loop skips any
+  // collection whose markup block isn't on the current page, and each page
+  // loads only its own data file (gallery-data.js / boutique-data.js).
+  { id: "partywear-bridal", dir: "Real Images/Boutique/photos/partywear-bridal", alt: "Partywear and bridal lehenga from the boutique" },
+  { id: "suits-dresses",    dir: "Real Images/Boutique/photos/suits-dresses",    alt: "Suit or dress from the boutique" },
+  { id: "blouses-rail",     dir: "Real Images/Boutique/photos/blouses-rail",     alt: "Blouse from the boutique" },
+  { id: "jewelry-rail",     dir: "Real Images/Boutique/photos/jewelry-rail",     alt: "Jewelry from the boutique" },
+  { id: "accessories-rail", dir: "Real Images/Boutique/photos/accessories-rail", alt: "Accessory from the boutique" },
 ];
 
 // Boutique (boutique.html): Neena's traditional Indian clothing & jewelry.
@@ -111,7 +120,12 @@ galleryCollections.forEach(({ id, dir, alt }) => {
 
   const sizes = (typeof galleryData !== 'undefined' && galleryData[id]) || [];
   const count = sizes.length;
-  if (!count) return;
+  if (!count) {
+    // Rail is wired up but has no photos yet — hide it rather than show a
+    // heading and arrows over an empty strip.
+    block.hidden = true;
+    return;
+  }
 
   const total = count < MIN_SLIDES_FOR_LOOP
     ? Math.ceil(MIN_SLIDES_FOR_LOOP / count) * count

@@ -2265,3 +2265,71 @@ img {
 
 .service-card:hover .service-card-media img.is-artwork,
 .boutique-tile:hover .boutique-tile-media img.is-artwork { transform: none; }
+
+/* ==========================================================================
+   Boutique rails — the gallery carousel on a light background
+   ========================================================================== */
+
+/* .portfolio is built for the dark maroon gallery page: white headings, white
+   arrow outlines, white pagination, white image borders. .is-light re-colours
+   just those pieces so the same component works on the boutique's cream. */
+.portfolio.is-light {
+  background: var(--color-background);
+  color: var(--color-on-surface);
+  padding: var(--section-padding-mobile) 0;
+}
+
+.portfolio.is-light::before { display: none; }
+
+.portfolio.is-light .portfolio-header .eyebrow { color: var(--color-primary); }
+.portfolio.is-light .portfolio-header .section-title { color: var(--color-primary); }
+
+.portfolio.is-light .portfolio-nav button {
+  border-color: rgba(92,39,34,0.28);
+  color: var(--color-primary);
+  background: transparent;
+}
+
+.portfolio.is-light .portfolio-nav button:hover {
+  background: rgba(92,39,34,0.06);
+  border-color: var(--color-primary);
+}
+
+.portfolio.is-light .portfolio-nav button.next {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.portfolio.is-light .portfolio-nav button.next:hover {
+  background: var(--color-burnt-sienna);
+  border-color: var(--color-burnt-sienna);
+}
+
+.portfolio.is-light .swiper-slide img {
+  border-color: rgba(92,39,34,0.10);
+  box-shadow: var(--shadow-soft);
+}
+
+.portfolio.is-light .swiper-slide img:not(.is-loaded) {
+  background: rgba(92,39,34,0.06);
+}
+
+.portfolio.is-light .swiper-pagination-bullet {
+  background: rgba(92,39,34,0.25);
+}
+
+.portfolio.is-light .swiper-pagination-bullet-active {
+  background: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(92,39,34,0.12);
+}
+
+/* Rail headings sit below the section's own h2, so they read a touch smaller */
+.boutique-rail .portfolio-header .section-title { font-size: 26px; }
+.boutique-rail .services-header { margin-bottom: 20px; }
+.boutique-rail .boutique-note { margin-top: 18px; }
+
+@media (min-width: 768px) {
+  .portfolio.is-light { padding: var(--section-padding-desktop) 0; }
+  .boutique-rail .portfolio-header .section-title { font-size: 30px; }
+}
