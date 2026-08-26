@@ -104,6 +104,20 @@ SETS = [
 EXCLUDE = {
     # Sarees — vendor "f" logo top-left plus code 88125 bottom-right.
     "IMG-20250929-WA0025.jpg",
+    # Jewelry — 🔴 A THIRD KIND OF MARK, AND THE ONE WITH MONEY ATTACHED: several of
+    # these carry a PRICE burned into the frame ("350", "650", "Pachi Kundan 260").
+    # They come from a supplier's WhatsApp catalogue, so the number is very likely
+    # the WHOLESALE price — publishing it would show customers what Neena pays. The
+    # ones below could not be cropped clear; the rest are handled in CROPS.
+    "IMG-20250717-WA0012.jpg",   # "No. 21470" on the backdrop INSIDE the necklace arc
+    "IMG-20250717-WA0027.jpg",   # "No. 21470", same frame, different colourway
+    "IMG-20260817-WA0080.jpg",   # SJNX code diagonal across the piece + badge on it
+    "IMG-20260817-WA0082.jpg",   # SJNX code diagonal across the piece + corner badge
+    # Jewelry — excluded on QUALITY, not on any mark. Both are multi-panel contact
+    # sheets (6-9 products in one frame). Every other photo on this site is a single
+    # piece or a model shot; a grid of thumbnails in a carousel reads as a screenshot.
+    "IMG-20240621-WA0007.jpg",
+    "IMG-20240622-WA0037.jpg",
     # Accessories — badge stamped on the piece itself, uncroppable.
     "IMG-20260817-WA0046.jpg",   # SJNX-CODE-200, badge on the bracelet
     "IMG-20260817-WA0083.jpg",   # SJNX-CODE-C-70, two badges on the kada
@@ -126,6 +140,19 @@ CROPS = {
     "IMG-20260818-WA0044.jpg": (0.24, 0.05, 1.00, 1.00),  # drop the "940" scale display
     "IMG-20260818-WA0048.jpg": (0.00, 0.35, 0.72, 1.00),
     "IMG-20260818-WA0071.jpg": (0.12, 0.30, 0.76, 1.00),  # centre the ring in a 3/4 box
+    # Jewelry. Mostly a price in the bottom-right corner, sometimes with a
+    # "Shot on OnePlus" camera watermark bottom-left — one crop clears both.
+    "IMG-20240120-WA0013.jpg": (0.00, 0.00, 1.00, 0.92),  # "350"
+    "IMG-20240621-WA0001.jpg": (0.00, 0.00, 1.00, 0.91),  # "650"
+    "IMG-20240621-WA0003.jpg": (0.00, 0.00, 1.00, 0.92),  # "650"
+    "IMG-20240621-WA0013.jpg": (0.00, 0.00, 1.00, 0.78),  # "390"
+    "IMG-20240621-WA0014.jpg": (0.00, 0.00, 1.00, 0.83),  # "360"
+    "IMG-20240621-WA0028.jpg": (0.00, 0.00, 1.00, 0.92),  # "Pachi Kundan 260"
+    "IMG-20240622-WA0025.jpg": (0.00, 0.00, 0.70, 0.90),  # "B 290" + "S 400" + OnePlus
+    "IMG-20240622-WA0027.jpg": (0.00, 0.00, 1.00, 0.91),  # "285" + OnePlus
+    "IMG-20240622-WA0035.jpg": (0.00, 0.00, 1.00, 0.88),  # "410" + OnePlus — 0.92 left the "410" visible
+    "IMG-20250929-WA0103.jpg": (0.00, 0.13, 1.00, 1.00),  # style code "AN70720869", top
+    "IMG-20260817-WA0076.jpg": (0.00, 0.20, 1.00, 1.00),  # "SJNX-CODE-310", top
 }
 
 # Category tile slug -> (source folder, basename). One representative photo per
