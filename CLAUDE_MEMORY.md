@@ -1,5 +1,5 @@
 # Henna by Neena Jain Website — Memory
-Updated: 2026-08-18 | LIVE at https://hennabyneenajain.com. 5 pages incl. Boutique. Gallery = 7 carousels / 108 photos. Boutique = 3 photo rails (39) + 15 type tiles.
+Updated: 2026-08-26 | LIVE at https://hennabyneenajain.com. 5 pages incl. Boutique. Gallery = 7 carousels / 108 photos. Boutique = **5 photo rails (67) + 13 type tiles**, all real photos.
 
 ## Stack
 - Frontend: Static HTML/CSS/JS, no build step, no framework
@@ -29,9 +29,11 @@ Open:
 - Site structure: index.html (home), gallery.html, faq.html (FAQ + Stain Progression), book.html (all contact/booking info — split out from the homepage Contact section)
 - Homepage order: hero → trust bar → about → services (+ "View the Full Gallery" CTA above the cards) → reviews → footer
 - Gallery is **7 carousels, 108 photos** — VERIFIED 2026-08-18 from gallery-data.js: Bridal 15 · Feet 15 · Stylish 16 · Party 17 · Event Guest 11 · Family 14 · Jagua 20. **White Henna was dropped**; the earlier "8 carousels / 121 photos incl. White 4" line was stale.
-- **boutique.html** (nav tab "Boutique"): Neena's home-based Indian clothing/jewelry business. Order: story write-up (4 paras, 2-column ≥900px) → 3 headline cards → 3 photo rails (Partywear & Bridal 9 · Suits & Dresses 18 · Blouses 12) → 4 filter bubbles (All/Clothing/Jewelry/Accessories) + 15 type tiles → CTA.
-- Boutique **Jewelry and Accessories rails exist but are EMPTY and auto-hidden** — script.js hides any `.gallery-collection` whose manifest entry is `[]`. Drop photos in `../Boutique Photos/Jewelry` (or `/Accessories`), rerun `tools/build-boutique-photos.py`, and they appear.
-- The 15 boutique type tiles are still **decorative mandala placeholders**, now sitting directly below 39 real garment photos. Kush has been told they will start reading as "images missing" — next candidate for real photos.
+- **boutique.html** (nav tab "Boutique"): Neena's home-based Indian clothing/jewelry business. Order: story write-up (4 paras, 2-column ≥900px) → 3 headline cards → **5 photo rails (Partywear & Bridal 9 · Sarees 19 · Suits & Dresses 18 · Blouses 12 · Accessories 9 = 67)** → 4 filter bubbles (All/Clothing/Jewelry/Accessories) + **13 type tiles** → CTA. VERIFIED 2026-08-26.
+- Boutique **Jewelry rail exists but is EMPTY and auto-hidden** — script.js hides any `.gallery-collection` whose manifest entry is `[]`. Drop photos in `../Boutique Photos/Jewelry` (any nesting — os.walk recurses), rerun `tools/build-boutique-photos.py`, and it appears. The Accessories rail was in this state until 2026-08-26 and is now live.
+- 🟢 **THE MANDALA TILES ARE GONE (2026-08-26).** 13 of the 15 type tiles now carry a real photo, as do the 3 headline cards. **"Ring Bracelets" and "Anklets" were REMOVED, not faked** — no publishable photo exists for either, and one drawing among twelve photographs reads as a broken image. Restoring one is two lines: a `TILES` entry in the build script + a `boutiqueItems` entry in script.js. Both carry a ⚠️ comment naming the other.
+  · The mandala SVGs are NOT deleted — `Real Images/Boutique/placeholders/` still holds all 18 and `isArtwork()` still special-cases that path. Nothing references them; they stay as the fallback.
+- 🔴 **SUPPLIER WATERMARKS ARE NOW A REAL CONSTRAINT ON THIS SITE.** 13 of the 16 accessory sources carry a wholesaler "SJNX" badge AND a printed product code; the one saree source `IMG-20250929-WA0025.jpg` carries a different vendor's mark. VERIFIED 2026-08-26 that none of the 39 previously-live garment photos has any such branding. Two kinds, only one fixable: a code on the BACKDROP crops away (`CROPS` in the build script, applied before resize); a badge stamped ON THE PIECE does not, at any framing (`EXCLUDE`). ⚠️ A centre crop does NOT rescue these — MEASURED by simulating `object-fit: cover` at 3/4 on all 16; the codes sit beside the piece, not in a corner. **Rights position is UNRULED** — Kush was asked 2026-08-26 and has not answered.
 
 ## Critical Paths
 - index.html/styles.css/script.js: shared core
@@ -40,10 +42,13 @@ Open:
 - Section rhythm: `--section-padding-mobile`/`--section-padding-desktop` (in `:root`) are 20px/32px and drive nearly all section-to-section spacing sitewide — tune these two variables rather than patching individual section padding when adjusting overall page density
 - **Build tooling lives in `tools/` IN THE REPO** — never in a scratchpad. (2026-08-18: `build-gallery.py` was kept in the session scratchpad, got wiped between sessions, and had to be reconstructed from memory. It is committed now; keep it that way.)
   · `tools/build-gallery.py` → gallery WebPs + `gallery-data.js`
-  · `tools/build-boutique-photos.py` → boutique rail WebPs + `boutique-data.js`
+  · `tools/build-boutique-photos.py` → boutique rail WebPs + **category tiles + headline covers** + `boutique-data.js`. Five maps drive it: `SETS` (rails), `EXCLUDE` (never published), `CROPS` (per-file crop box, applied BEFORE resize), `TILES`/`COVERS` (stable slug-named images) and `COVER_CROPS`.
+  · `tools/verify-boutique.mjs` → runs the REAL `script.js` under `node:vm` against a recording DOM shim and prints what it actually built (slides per rail, hidden rails, tiles, covers). **Use it when the machine guard blocks a browser** — it is a measurement, not a code read.
   · `tools/build-boutique-placeholders.py` → the mandala SVG placeholders
   · `tools/set-domain.py https://new.com` → rewrites all 25 absolute URLs
 - 🔴 **COUNTS ARE NO LONGER IN script.js** (changed 2026-08-18). `gallery-data.js` / `boutique-data.js` are GENERATED and carry both the per-photo pixel sizes and the counts. Rerun the build script; script.js needs no edit. Any instruction saying "update the `count` values in script.js" is STALE.
+- 🔴 **TILE AND CARD BOXES ARE DIFFERENT ASPECT RATIOS AND BOTH USE `object-fit: cover`.** `.boutique-tile-media` is **3/4**, `.service-card-media` is **4/3**. A portrait image dropped into a card box is centre-cropped hard enough to behead a model — that happened on the first build 2026-08-26. Build each image at its target ratio (`TILE_SIZE` / `COVER_SIZE`) so the browser crops nothing and the crop chosen in the script is the crop that ships.
+- 🔴 **TILE IMAGES ARE SLUG-NAMED ON PURPOSE; RAIL IMAGES ARE NUMBERED AND RENUMBER.** Never point a tile at `…/photos/<slug>/<slug>-NN.webp` — the next rebuild moves it. That is the same defect that broke the homepage service cards three times.
 - 🔴 **BUT the 3 homepage service-card image refs are STILL hardcoded and renumbering still moves them.** `index.html` points at `bridal-02.webp`, `party-07.webp`, `jagua-09.webp`. This broke THREE times in one session (jagua-10→11 when photos were added, jagua-16→09 when photos were removed, bridal-05→02 when feet split out). After ANY rebuild, open index.html and confirm each card still shows the photo you expect.
 - `tools/set-domain.py https://newdomain.com` rewrites all 25 absolute URLs (canonical, OG, schema, sitemap, robots) if the domain ever changes.
 - Gallery images load on demand: `data-src` + a 600px proximity check, 3 slides behind / 6 ahead. Loading all of them at once cost ~385MB of decoded bitmap and made scrolling crawl.
