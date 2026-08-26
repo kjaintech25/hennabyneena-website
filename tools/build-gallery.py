@@ -4,11 +4,16 @@
 Run from anywhere:  python3 tools/build-gallery.py
 
 Reads  ../Updated Images and Text/<folder>/**  (any nesting depth)
-Writes Real Images/Gallery/<slug>/<slug>-NN.webp
+Writes Real Images/Gallery/<slug>/<slug>-NN.webp   (carousel slides, NUMBERED)
+       Real Images/Gallery/cards/<name>.webp       (homepage cards, STABLE names)
+       gallery-data.js  (counts + per-photo pixel sizes)
 
-After running, update the `count` values in script.js to match the totals it
-prints, and check that the three homepage service-card references still point
-at the photos you expect — renumbering can move them.
+Counts are NOT in script.js — they come from the generated gallery-data.js, so
+nothing needs updating by hand after a run.
+
+The carousel files are NUMBERED and renumber whenever photos are added or
+removed. The homepage card files are named after the CARD, built from a named
+source, and therefore cannot move — see CARDS below.
 
 Requires Pillow:  python3 -m pip install pillow
 """
@@ -32,6 +37,26 @@ JOBS = [
 
 MAX_EDGE = 1200
 QUALITY = 78
+
+# The three homepage "What I Offer" cards, keyed on the SOURCE filename.
+#
+# 🔴 THIS MAP EXISTS BECAUSE POINTING index.html AT A NUMBERED SLIDE BROKE FOUR
+# TIMES. `<slug>-NN.webp` is rebuilt from scratch on every run, so adding or
+# removing ONE photo shifts every file after it — the ref stays valid and
+# silently shows a different photograph. Nothing errors and no gate catches it.
+# Source basenames never move, so a card built from one cannot drift.
+# ⚠️ NEVER point a card in index.html back at a `<slug>-NN.webp` path.
+#
+# Cards render in a 4/3 box with object-fit: cover (.service-card-media in
+# styles.css). Building at that ratio means the browser crops nothing.
+# ⚠️ NOT 3/4 — that is the boutique TILE ratio, and a portrait image in the 4/3
+# card box is centre-cropped hard enough to behead a model.
+CARD_SIZE = (900, 675)
+CARDS = {
+    "card-bridal":  "InShot_20231029_002952559.jpg",
+    "card-stylish": "InShot_20260331_214551241.jpg",
+    "card-jagua":   "InShot_20240608_200456795.jpg",
+}
 
 # Photos that sit in one source folder but belong in another carousel, keyed by
 # filename. Reassigned photos are appended to the end of their destination so
@@ -166,6 +191,34 @@ for slug in ALL_SLUGS:
     manifest[slug] = dims
     total += len(files)
     print(f"{slug:8} {len(files):>3} images")
+
+# Homepage cards. Built from named sources into STABLE filenames, so a rebuild
+# can never move them the way it moves the numbered slides above.
+card_dir = os.path.join(DST, "cards")
+os.makedirs(card_dir, exist_ok=True)
+for stale in os.listdir(card_dir):
+    if stale.endswith(".webp"):
+        os.remove(os.path.join(card_dir, stale))
+
+# Sources live under any of the JOBS folders; basenames are unique across them.
+by_name = {}
+for _src_dir, _slug in JOBS:
+    for root, _dirs, names in os.walk(os.path.join(SRC, _src_dir)):
+        for n in names:
+            if n.lower().endswith(EXTS):
+                by_name.setdefault(n, os.path.join(root, n))
+
+for card, basename in sorted(CARDS.items()):
+    path = by_name.get(basename)
+    if not path:
+        # Loud, not silent: a missing card source means index.html is about to
+        # 404 on a live page, which is worse than a build that says so.
+        print(f"  ! CARD {card}: source not found — {basename}")
+        continue
+    im = trim_white(ImageOps.exif_transpose(Image.open(path)).convert("RGB"))
+    ImageOps.fit(im, CARD_SIZE, Image.LANCZOS).save(
+        os.path.join(card_dir, f"{card}.webp"), "WEBP", quality=QUALITY, method=6)
+print(f"cards    {len(CARDS):>3} images  ({CARD_SIZE[0]}x{CARD_SIZE[1]})")
 
 # Every photo's final pixel size, so the page can reserve the right space for a
 # slide before its image has loaded. Without this the carousel can't size

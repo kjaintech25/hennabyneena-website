@@ -1,5 +1,5 @@
 # Henna by Neena Jain Website — Memory
-Updated: 2026-08-26 | LIVE at https://hennabyneenajain.com. 5 pages incl. Boutique. Gallery = 7 carousels / 108 photos. Boutique = **5 photo rails (67) + 13 type tiles**, all real photos.
+Updated: 2026-08-26 | LIVE at https://hennabyneenajain.com. 5 pages incl. Boutique. Gallery = 7 carousels / 108 photos. Boutique = **6 photo rails (88) + 13 type tiles**, all real photos.
 
 ## Stack
 - Frontend: Static HTML/CSS/JS, no build step, no framework
@@ -41,7 +41,7 @@ Open:
 - faq.html: page order is **Stain Progression carousel first** (right under the intro), then FAQ accordion, then CTA — deliberately reordered from the original FAQ-first layout
 - Section rhythm: `--section-padding-mobile`/`--section-padding-desktop` (in `:root`) are 20px/32px and drive nearly all section-to-section spacing sitewide — tune these two variables rather than patching individual section padding when adjusting overall page density
 - **Build tooling lives in `tools/` IN THE REPO** — never in a scratchpad. (2026-08-18: `build-gallery.py` was kept in the session scratchpad, got wiped between sessions, and had to be reconstructed from memory. It is committed now; keep it that way.)
-  · `tools/build-gallery.py` → gallery WebPs + `gallery-data.js`
+  · `tools/build-gallery.py` → gallery WebPs + **the 3 homepage card images** + `gallery-data.js`. Its `CARDS` map builds `Real Images/Gallery/cards/<name>.webp` at **4/3** from NAMED sources.
   · `tools/build-boutique-photos.py` → boutique rail WebPs + **category tiles + headline covers** + `boutique-data.js`. Five maps drive it: `SETS` (rails), `EXCLUDE` (never published), `CROPS` (per-file crop box, applied BEFORE resize), `TILES`/`COVERS` (stable slug-named images) and `COVER_CROPS`.
   · `tools/verify-boutique.mjs` → runs the REAL `script.js` under `node:vm` against a recording DOM shim and prints what it actually built (slides per rail, hidden rails, tiles, covers). **Use it when the machine guard blocks a browser** — it is a measurement, not a code read.
   · `tools/build-boutique-placeholders.py` → the mandala SVG placeholders
@@ -49,7 +49,9 @@ Open:
 - 🔴 **COUNTS ARE NO LONGER IN script.js** (changed 2026-08-18). `gallery-data.js` / `boutique-data.js` are GENERATED and carry both the per-photo pixel sizes and the counts. Rerun the build script; script.js needs no edit. Any instruction saying "update the `count` values in script.js" is STALE.
 - 🔴 **TILE AND CARD BOXES ARE DIFFERENT ASPECT RATIOS AND BOTH USE `object-fit: cover`.** `.boutique-tile-media` is **3/4**, `.service-card-media` is **4/3**. A portrait image dropped into a card box is centre-cropped hard enough to behead a model — that happened on the first build 2026-08-26. Build each image at its target ratio (`TILE_SIZE` / `COVER_SIZE`) so the browser crops nothing and the crop chosen in the script is the crop that ships.
 - 🔴 **TILE IMAGES ARE SLUG-NAMED ON PURPOSE; RAIL IMAGES ARE NUMBERED AND RENUMBER.** Never point a tile at `…/photos/<slug>/<slug>-NN.webp` — the next rebuild moves it. That is the same defect that broke the homepage service cards three times.
-- 🔴 **BUT the 3 homepage service-card image refs are STILL hardcoded and renumbering still moves them.** `index.html` points at `bridal-02.webp`, `party-07.webp`, `jagua-09.webp`. This broke THREE times in one session (jagua-10→11 when photos were added, jagua-16→09 when photos were removed, bridal-05→02 when feet split out). After ANY rebuild, open index.html and confirm each card still shows the photo you expect.
+- ✅ **THE HOMEPAGE SERVICE-CARD BUG IS FIXED AT THE ROOT (2026-08-26, FRL-009). THE OLD RULE — "after ANY rebuild, open index.html and confirm each card" — IS RETIRED; do not reinstate it.** `index.html` now points at `Real Images/Gallery/cards/card-{bridal,stylish,jagua}.webp`, built by `build-gallery.py`'s `CARDS` map from NAMED source files. PROVEN by revert/restore: a photo was added to `bridalhenna/` forcing a renumber — `card-bridal.webp` md5 was IDENTICAL before and after, while `bridal-02.webp` md5 CHANGED. The old approach silently swapped the photo; the new one cannot.
+  ⚠️ It had bitten FOUR times (jagua-10→11 on an add, jagua-16→09 on a removal, bridal-05→02 when feet split out, party-07 stranded on a renamed card). **Never point a card back at a `<slug>-NN.webp` path.**
+  🔴 **CARDS BUILD AT 4/3, BOUTIQUE TILES AT 3/4** — `.service-card-media` vs `.boutique-tile-media`, both `object-fit: cover`. Mixing them centre-crops a full-length model to a midriff.
 - `tools/set-domain.py https://newdomain.com` rewrites all 25 absolute URLs (canonical, OG, schema, sitemap, robots) if the domain ever changes.
 - Gallery images load on demand: `data-src` + a 600px proximity check, 3 slides behind / 6 ahead. Loading all of them at once cost ~385MB of decoded bitmap and made scrolling crawl.
 - Carousels with fewer than 8 photos repeat their images (aria-hidden) — Swiper's loop silently freezes below ~2x the visible slides.
