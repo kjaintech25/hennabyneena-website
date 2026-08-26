@@ -4,12 +4,17 @@
     python3 tools/build-boutique-photos.py
 
 Reads  ../Boutique Photos/<set>/**
-Writes Real Images/Boutique/photos/<slug>/<slug>-NN.webp
+Writes Real Images/Boutique/photos/<slug>/<slug>-NN.webp   (carousel rails)
+       Real Images/Boutique/tiles/<slug>.webp              (category tiles)
        boutique-data.js  (sizes + counts, same shape as gallery-data.js)
 
 The carousels reuse the gallery machinery in script.js, so boutique-data.js
 deliberately declares `galleryData` — boutique.html loads this file and
 gallery.html loads gallery-data.js, never both, so there's no clash.
+
+Rail filenames are NUMBERED and renumber whenever a set changes. Tile
+filenames are named after the category and are STABLE, which is why the
+tiles are built here from named sources rather than pointed at a rail file.
 
 Requires Pillow:  python3 -m pip install pillow
 """
@@ -20,24 +25,51 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.dirname(HERE)
 SRC = os.path.join(os.path.dirname(SITE), "Boutique Photos")
 DST = os.path.join(SITE, "Real Images", "Boutique", "photos")
+TILE_DST = os.path.join(SITE, "Real Images", "Boutique", "tiles")
 
 MAX_EDGE = 1200
 QUALITY = 78
 EXTS = (".jpg", ".jpeg", ".png", ".heic", ".webp")
+
+# Tiles render in a 3/4 box and the three headline cards in a 4/3 one — see
+# .boutique-tile-media and .service-card-media in styles.css. Building each at
+# its own ratio means the browser crops nothing, so the crop chosen here is the
+# crop that ships. ⚠️ These two ratios are NOT interchangeable: a 3/4 portrait
+# dropped into the 4/3 card is centre-cropped hard enough to behead a model.
+TILE_SIZE = (640, 853)
+COVER_SIZE = (900, 675)
 
 # Source folder -> carousel slug. ORDER lists the filenames that should come
 # first; anything not named falls in afterwards in filename order.
 #
 # Party & Bridal mixes glossy model shots with mannequin and showroom shots, so
 # the models lead and the stock shots follow — otherwise the two styles
-# alternate and the strip looks accidental. Suits is nearly all model shots,
-# with three composite/mannequin frames pushed to the end. Blouses is uniformly
-# flat-lay, which is how blouses are actually sold, so it needs no reordering.
+# alternate and the strip looks accidental. Sarees is ordered the same way:
+# models, then draped-fabric detail, then mannequins, with the two
+# packaged-stock frames last since they read as inventory rather than product.
+# Suits is nearly all model shots, with three composite/mannequin frames pushed
+# to the end. Blouses is uniformly flat-lay, which is how blouses are actually
+# sold, so it needs no reordering. Accessories is fully enumerated because most
+# of that folder is excluded — see EXCLUDE.
 SETS = [
     ("Party and Bridal Wear", "partywear-bridal", [
         "IMG-20250929-WA0089.jpg", "IMG-20260205-WA0028.jpg", "IMG-20260526-WA0005.jpg",
         "IMG-20260617-WA0000.jpg", "IMG-20260621-WA0079.jpg", "IMG-20260624-WA0000.jpg",
         "IMG-20260207-WA0041.jpg", "IMG-20260207-WA0053.jpg", "IMG-20250510-WA0060.jpg",
+    ]),
+    ("Sarees", "sarees-rail", [
+        # models
+        "IMG-20220623-WA0029.jpg", "IMG-20251002-WA0003.jpg", "IMG-20251012-WA0015.jpg",
+        "IMG-20211012-WA0019.jpg", "IMG-20220623-WA0046.jpg", "IMG-20220623-WA0042.jpg",
+        "IMG-20220525-WA0003.jpg", "IMG-20220623-WA0044.jpg",
+        # draped-fabric detail
+        "IMG-20241213-WA0010.jpg", "IMG-20241213-WA0013.jpg", "IMG-20241210-WA0019.jpg",
+        "IMG-20260226-WA0042.jpg", "IMG-20241214-WA0016.jpg", "IMG-20210614-WA0076.jpg",
+        "IMG-20210614-WA0080.jpg",
+        # mannequin
+        "IMG-20260501-WA0007.jpg", "IMG-20260506-WA0021.jpg",
+        # packaged stock, last
+        "IMG-20230302-WA0006.jpg", "IMG-20230302-WA0011.jpg",
     ]),
     ("Suits and Dresses", "suits-dresses", [
         "IMG-20250917-WA0000.jpg", "IMG-20250921-WA0038.jpg", "IMG-20250921-WA0042.jpg",
@@ -48,25 +80,132 @@ SETS = [
         "IMG-20260805-WA0002.jpg", "IMG-20251029-WA0010.jpg", "IMG-20260617-WA0002.jpg",
     ]),
     ("Blouses", "blouses-rail", []),
-    # Not shot yet. The folders don't have to exist — an empty set writes an
+    # Not shot yet. The folder doesn't have to exist — an empty set writes an
     # empty list to boutique-data.js and script.js hides the rail, so the page
     # never shows a headed carousel with nothing in it. Drop photos into
-    # ../Boutique Photos/Jewelry (or /Accessories), rerun, and the rail appears.
+    # ../Boutique Photos/Jewelry, rerun, and the rail appears.
     ("Jewelry", "jewelry-rail", []),
-    ("Accessories", "accessories-rail", []),
+    ("Accessories", "accessories-rail", [
+        "IMG-20220603-WA0020.jpg", "IMG-20220603-WA0021.jpg", "IMG-20260817-WA0045.jpg",
+        "IMG-20260818-WA0018.jpg", "IMG-20260818-WA0016.jpg", "IMG-20260818-WA0043.jpg",
+        "IMG-20260818-WA0071.jpg", "IMG-20260818-WA0044.jpg", "IMG-20260818-WA0048.jpg",
+    ]),
 ]
 
+# Filenames that are never published, by basename.
+#
+# 🔴 THESE ARE THE SUPPLIER'S CATALOGUE PHOTOS. 13 of the 16 accessory shots
+# carry an "SJNX" badge AND a printed product code ("SJNX-CODE-R-365"). Where
+# the code sits on the backdrop it can be cropped away (see CROPS); where the
+# supplier stamped a badge onto the JEWELLERY ITSELF there is no crop that
+# removes it, so the photo is excluded rather than shipped watermarked. Nothing
+# else on this site carries another business's branding — VERIFIED 2026-08-26
+# across all 39 previously-live garment photos.
+EXCLUDE = {
+    # Sarees — vendor "f" logo top-left plus code 88125 bottom-right.
+    "IMG-20250929-WA0025.jpg",
+    # Accessories — badge stamped on the piece itself, uncroppable.
+    "IMG-20260817-WA0046.jpg",   # SJNX-CODE-200, badge on the bracelet
+    "IMG-20260817-WA0083.jpg",   # SJNX-CODE-C-70, two badges on the kada
+    "IMG-20260818-WA0024(1).jpg",  # SJNX-CODE-NT-90, badge on the ring
+    "IMG-20260818-WA0027.jpg",   # SJNX-CODE-S-105, badge on the ring
+    "IMG-20260818-WA0037.jpg",   # SJNX-CODE-B-85, badge on the pendant
+    "IMG-20260818-WA0065.jpg",   # SJNX-CODE-NT-90 over the model, badge on the ring
+    "IMG-20260818-WA0084.jpg",   # SJNX-CODE-D-230, badge on the bangle
+}
 
-def main():
+# basename -> (left, top, right, bottom) as fractions of the source image.
+# Applied before the resize, so the published WebP has never contained the
+# cropped-away region. Each of these removes a supplier code that sits on the
+# backdrop rather than on the piece.
+CROPS = {
+    "IMG-20260817-WA0045.jpg": (0.00, 0.55, 0.55, 1.00),  # keep the lower-left pair
+    "IMG-20260818-WA0016.jpg": (0.48, 0.16, 1.00, 0.97),  # keep the right-hand earring
+    "IMG-20260818-WA0018.jpg": (0.12, 0.12, 0.86, 1.00),  # drop code above, badge right
+    "IMG-20260818-WA0043.jpg": (0.10, 0.30, 0.95, 1.00),
+    "IMG-20260818-WA0044.jpg": (0.24, 0.05, 1.00, 1.00),  # drop the "940" scale display
+    "IMG-20260818-WA0048.jpg": (0.00, 0.35, 0.72, 1.00),
+    "IMG-20260818-WA0071.jpg": (0.12, 0.30, 0.76, 1.00),  # centre the ring in a 3/4 box
+}
+
+# Category tile slug -> (source folder, basename). One representative photo per
+# category Neena carries; the slug matches the `src` in script.js's
+# boutiqueItems. CROPS above applies here too.
+#
+# ⚠️ TWO CATEGORIES HAVE NO PHOTO AND ARE NOT IN THIS MAP: "Ring Bracelets"
+# (the only two shots are badged on the piece) and "Anklets" (no photo exists
+# in any folder). Their tiles are removed from boutiqueItems rather than left
+# as artwork among real photos — add the source here and the tile back to
+# script.js when Neena sends one.
+TILES = {
+    "lehengas":      ("Party and Bridal Wear", "IMG-20260526-WA0005.jpg"),
+    "sarees":        ("Sarees", "IMG-20251002-WA0003.jpg"),  # 799x1066 — exactly 3/4
+    "dresses":       ("Suits and Dresses", "IMG-20251120-WA0006.jpg"),
+    "indo-western":  ("Suits and Dresses", "IMG-20260319-WA0003.jpg"),
+    "partywear":     ("Party and Bridal Wear", "IMG-20260617-WA0000.jpg"),
+    "blouses":       ("Blouses", "Screenshot_20260808_221023_WhatsApp.jpg"),
+    "dupattas":      ("Suits and Dresses", "IMG-20250921-WA0038.jpg"),
+    "gold-plated":   ("Accessories", "IMG-20260818-WA0018.jpg"),
+    "semi-precious": ("Accessories", "IMG-20260818-WA0016.jpg"),
+    "oxidized":      ("Accessories", "IMG-20220603-WA0020.jpg"),
+    "earrings":      ("Accessories", "IMG-20260817-WA0045.jpg"),
+    "rings":         ("Accessories", "IMG-20260818-WA0071.jpg"),
+    "bangles-kadas": ("Accessories", "IMG-20260818-WA0044.jpg"),
+}
+
+# The three headline cards at the top of boutique.html. Separate map because
+# the card box is LANDSCAPE, so these are chosen from the few sources that are
+# wider than tall — a full-length model shot cannot fill a 4/3 box without
+# cropping to a midriff.
+COVERS = {
+    "cover-clothing":    ("Sarees", "IMG-20241213-WA0010.jpg"),
+    "cover-jewelry":     ("Accessories", "IMG-20260818-WA0016.jpg"),
+    "cover-accessories": ("Accessories", "IMG-20220603-WA0021.jpg"),
+}
+
+# Covers need their own crops: the CROPS entries above are tuned to fill a
+# PORTRAIT tile and several of them come out portrait, which is the wrong shape
+# here. A cover crop wins over the CROPS entry for the same file.
+COVER_CROPS = {
+    # Wide crop of the right-hand earring. Starting at 0.30 down clears both the
+    # printed code (upper band) and the corner badge.
+    "IMG-20260818-WA0016.jpg": (0.35, 0.30, 1.00, 0.80),
+}
+
+
+def find_all(src_dir):
+    """basename -> absolute path, recursing (the folders are doubly nested)."""
+    found = {}
+    for root, _dirs, names in os.walk(os.path.join(SRC, src_dir)):
+        for n in names:
+            if n.lower().endswith(EXTS) and n not in EXCLUDE:
+                found[n] = os.path.join(root, n)
+    return found
+
+
+def load(path, crops=CROPS):
+    """Open, fix EXIF rotation, and apply this file's crop if it has one."""
+    im = ImageOps.exif_transpose(Image.open(path)).convert("RGB")
+    box = crops.get(os.path.basename(path))
+    if box:
+        w, h = im.size
+        left, top, right, bottom = box
+        im = im.crop((int(left * w), int(top * h), int(right * w), int(bottom * h)))
+    return im
+
+
+def clear_webp(directory):
+    os.makedirs(directory, exist_ok=True)
+    for stale in os.listdir(directory):
+        if stale.endswith(".webp"):
+            os.remove(os.path.join(directory, stale))
+
+
+def build_rails():
     manifest = {}
     total = 0
     for src_dir, slug, order in SETS:
-        found = {}
-        for root, _dirs, names in os.walk(os.path.join(SRC, src_dir)):
-            for n in names:
-                if n.lower().endswith(EXTS):
-                    found[n] = os.path.join(root, n)
-
+        found = find_all(src_dir)
         named = [found[n] for n in order if n in found]
         rest = [found[n] for n in sorted(found) if n not in set(order)]
         files = named + rest
@@ -76,14 +215,11 @@ def main():
             print(f"  ! {slug}: {len(missing)} name(s) in ORDER not found: {missing[:3]}")
 
         out_dir = os.path.join(DST, slug)
-        os.makedirs(out_dir, exist_ok=True)
-        for stale in os.listdir(out_dir):
-            if stale.endswith(".webp"):
-                os.remove(os.path.join(out_dir, stale))
+        clear_webp(out_dir)
 
         dims = []
         for i, path in enumerate(files, 1):
-            im = ImageOps.exif_transpose(Image.open(path)).convert("RGB")
+            im = load(path)
             w, h = im.size
             scale = MAX_EDGE / max(w, h)
             if scale < 1:
@@ -96,6 +232,32 @@ def main():
         total += len(files)
         note = "" if files else "   (no photos yet — rail stays hidden)"
         print(f"{slug:18} {len(files):>3} photos{note}")
+    return manifest, total
+
+
+def build_fixed(mapping, label, size, crops=CROPS):
+    """Build the stable-named images (tiles, covers) into TILE_DST."""
+    built = 0
+    for slug, (src_dir, basename) in sorted(mapping.items()):
+        found = find_all(src_dir)
+        path = found.get(basename)
+        if not path:
+            print(f"  ! {label} {slug}: source not found — {src_dir}/{basename}")
+            continue
+        im = ImageOps.fit(load(path, crops), size, Image.LANCZOS)
+        im.save(os.path.join(TILE_DST, f"{slug}.webp"), "WEBP",
+                quality=QUALITY, method=6)
+        built += 1
+    print(f"{label:18} {built:>3} images  ({size[0]}x{size[1]})")
+    return built
+
+
+def main():
+    manifest, total = build_rails()
+
+    clear_webp(TILE_DST)
+    build_fixed(TILES, "tiles", TILE_SIZE)
+    build_fixed(COVERS, "covers", COVER_SIZE, {**CROPS, **COVER_CROPS})
 
     lines = [
         "// GENERATED by tools/build-boutique-photos.py — do not edit by hand.",
@@ -110,7 +272,7 @@ def main():
     with open(os.path.join(SITE, "boutique-data.js"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    print(f"\ntotal {total} photos -> wrote boutique-data.js")
+    print(f"\ntotal {total} rail photos -> wrote boutique-data.js")
 
 
 if __name__ == "__main__":

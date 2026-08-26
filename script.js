@@ -24,6 +24,7 @@ const galleryCollections = [
   // collection whose markup block isn't on the current page, and each page
   // loads only its own data file (gallery-data.js / boutique-data.js).
   { id: "partywear-bridal", dir: "Real Images/Boutique/photos/partywear-bridal", alt: "Partywear and bridal lehenga from the boutique" },
+  { id: "sarees-rail",      dir: "Real Images/Boutique/photos/sarees-rail",      alt: "Saree from the boutique" },
   { id: "suits-dresses",    dir: "Real Images/Boutique/photos/suits-dresses",    alt: "Suit or dress from the boutique" },
   { id: "blouses-rail",     dir: "Real Images/Boutique/photos/blouses-rail",     alt: "Blouse from the boutique" },
   { id: "jewelry-rail",     dir: "Real Images/Boutique/photos/jewelry-rail",     alt: "Jewelry from the boutique" },
@@ -35,16 +36,22 @@ const galleryCollections = [
 // - boutiqueItems: one entry per piece. `type` must match a tab id.
 // - boutiqueCovers: the photo on each of the three headline cards.
 //
-// Every `src` below currently points at Real Images/Boutique/placeholders/ —
-// decorative mandala artwork standing in until Neena's own photos arrive. They
-// are deliberately ornamental rather than pictures of garments: a stock photo of
-// a saree she doesn't own would read as a claim about what's in stock.
+// Every `src` below points at Real Images/Boutique/tiles/, built by
+// tools/build-boutique-photos.py from one named source photo per category.
+// Those filenames are STABLE — unlike the numbered rail files, which renumber
+// whenever a set changes — so a rebuild never moves a tile's picture.
 //
-// To swap in a real photo: drop it in Real Images/Boutique/<type>/ and point
-// `src` there. Anything under /placeholders/ is treated as decorative (empty
-// alt text, since the item name below the tile already names it); a real photo
-// path gets the item name as its alt automatically. An empty `src` still falls
-// back to a "photo coming soon" tile.
+// The mandala artwork these replaced is still in Real Images/Boutique/
+// placeholders/, and script.js still treats any /placeholders/ path as
+// decorative (empty alt text, since the tile's own <h3> names it) while a real
+// photo path gets the item name as its alt automatically. An empty `src` falls
+// back to a "photo coming soon" tile. Nothing references the artwork now.
+//
+// ⚠️ TWO CATEGORIES ARE DELIBERATELY ABSENT: "Ring Bracelets" and "Anklets".
+// Neena carries both; there is no publishable photo of either (see EXCLUDE in
+// the build script). One drawing among twelve real photos reads as a broken
+// image, so the tile is removed rather than faked. Add the source to TILES in
+// the build script and the entry back here when a photo arrives.
 const boutiqueTabs = [
   { id: "all",         label: "All" },
   { id: "clothing",    label: "Clothing" },
@@ -53,9 +60,9 @@ const boutiqueTabs = [
 ];
 
 const boutiqueCovers = {
-  clothing:    "Real Images/Boutique/placeholders/cover-clothing.svg",
-  jewelry:     "Real Images/Boutique/placeholders/cover-jewelry.svg",
-  accessories: "Real Images/Boutique/placeholders/cover-accessories.svg",
+  clothing:    "Real Images/Boutique/tiles/cover-clothing.webp",
+  jewelry:     "Real Images/Boutique/tiles/cover-jewelry.webp",
+  accessories: "Real Images/Boutique/tiles/cover-accessories.webp",
 };
 
 // These are Neena's own categories. Each tile is a TYPE she carries, not an
@@ -63,23 +70,21 @@ const boutiqueCovers = {
 // go stale immediately. `type` must match a tab id above.
 const boutiqueItems = [
   // Clothing
-  { type: "clothing",    name: "Lehengas",         note: "Bridal through to festive",   src: "Real Images/Boutique/placeholders/lehengas.svg" },
-  { type: "clothing",    name: "Sarees",           note: "Designer and everyday",       src: "Real Images/Boutique/placeholders/sarees.svg" },
-  { type: "clothing",    name: "Dresses",          note: "Occasion and daywear",        src: "Real Images/Boutique/placeholders/dresses.svg" },
-  { type: "clothing",    name: "Indo-Western",     note: "Traditional meets modern",    src: "Real Images/Boutique/placeholders/indo-western.svg" },
-  { type: "clothing",    name: "Partywear",        note: "For sangeets and receptions", src: "Real Images/Boutique/placeholders/partywear.svg" },
-  { type: "clothing",    name: "Blouses",          note: "Ready-made and custom",       src: "Real Images/Boutique/placeholders/blouses.svg" },
-  { type: "clothing",    name: "Dupattas",         note: "Mix and match",               src: "Real Images/Boutique/placeholders/dupattas.svg" },
+  { type: "clothing",    name: "Lehengas",         note: "Bridal through to festive",   src: "Real Images/Boutique/tiles/lehengas.webp" },
+  { type: "clothing",    name: "Sarees",           note: "Designer and everyday",       src: "Real Images/Boutique/tiles/sarees.webp" },
+  { type: "clothing",    name: "Dresses",          note: "Occasion and daywear",        src: "Real Images/Boutique/tiles/dresses.webp" },
+  { type: "clothing",    name: "Indo-Western",     note: "Traditional meets modern",    src: "Real Images/Boutique/tiles/indo-western.webp" },
+  { type: "clothing",    name: "Partywear",        note: "For sangeets and receptions", src: "Real Images/Boutique/tiles/partywear.webp" },
+  { type: "clothing",    name: "Blouses",          note: "Ready-made and custom",       src: "Real Images/Boutique/tiles/blouses.webp" },
+  { type: "clothing",    name: "Dupattas",         note: "Mix and match",               src: "Real Images/Boutique/tiles/dupattas.webp" },
   // Jewelry
-  { type: "jewelry",     name: "Gold-Plated",      note: "High-polish finish",          src: "Real Images/Boutique/placeholders/gold-plated.svg" },
-  { type: "jewelry",     name: "Semi-Precious",    note: "Natural stone settings",      src: "Real Images/Boutique/placeholders/semi-precious.svg" },
-  { type: "jewelry",     name: "Oxidized",         note: "Antique silver tone",         src: "Real Images/Boutique/placeholders/oxidized.svg" },
+  { type: "jewelry",     name: "Gold-Plated",      note: "High-polish finish",          src: "Real Images/Boutique/tiles/gold-plated.webp" },
+  { type: "jewelry",     name: "Semi-Precious",    note: "Natural stone settings",      src: "Real Images/Boutique/tiles/semi-precious.webp" },
+  { type: "jewelry",     name: "Oxidized",         note: "Antique silver tone",         src: "Real Images/Boutique/tiles/oxidized.webp" },
   // Accessories
-  { type: "accessories", name: "Earrings",         note: "Studs to statement jhumkas",  src: "Real Images/Boutique/placeholders/earrings.svg" },
-  { type: "accessories", name: "Rings",            note: "Everyday and occasion",       src: "Real Images/Boutique/placeholders/rings.svg" },
-  { type: "accessories", name: "Ring Bracelets",   note: "Hand harness style",          src: "Real Images/Boutique/placeholders/ring-bracelets.svg" },
-  { type: "accessories", name: "Anklets",          note: "Single and pairs",            src: "Real Images/Boutique/placeholders/anklets.svg" },
-  { type: "accessories", name: "Bangles & Kadas",  note: "Sized to order",              src: "Real Images/Boutique/placeholders/bangles-kadas.svg" },
+  { type: "accessories", name: "Earrings",         note: "Studs to statement jhumkas",  src: "Real Images/Boutique/tiles/earrings.webp" },
+  { type: "accessories", name: "Rings",            note: "Everyday and occasion",       src: "Real Images/Boutique/tiles/rings.webp" },
+  { type: "accessories", name: "Bangles & Kadas",  note: "Sized to order",              src: "Real Images/Boutique/tiles/bangles-kadas.webp" },
 ];
 
 // Reviews: Add/remove objects below
