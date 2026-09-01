@@ -5,3 +5,6 @@
 # conversion run — ignore them so they can never be committed by `git add -A`.
 * 2.*
 * 3.*
+
+# Python bytecode from tools/*.py
+__pycache__/

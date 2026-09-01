@@ -19,7 +19,7 @@ tiles are built here from named sources rather than pointed at a rail file.
 Requires Pillow:  python3 -m pip install pillow
 """
 import os
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageColor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.dirname(HERE)
@@ -39,6 +39,14 @@ EXTS = (".jpg", ".jpeg", ".png", ".heic", ".webp")
 TILE_SIZE = (640, 853)
 COVER_SIZE = (900, 675)
 
+# --color-surface in styles.css. .boutique-tile-media sits on the cream page
+# background, so a tile letterboxed onto this colour has no visible edge.
+TILE_BG = ImageColor.getrgb("#faf7f1")
+# Breathing room around a letterboxed tile, as a fraction of the box. Kept
+# small: the landscape jewellery shots already lose height to the 3/4 box, and
+# every extra point of margin shrinks the piece further.
+TILE_MARGIN = 0.04
+
 # Source folder -> carousel slug. ORDER lists the filenames that should come
 # first; anything not named falls in afterwards in filename order.
 #
@@ -53,9 +61,9 @@ COVER_SIZE = (900, 675)
 # of that folder is excluded — see EXCLUDE.
 SETS = [
     ("Party and Bridal Wear", "partywear-bridal", [
-        "IMG-20250929-WA0089.jpg", "IMG-20260205-WA0028.jpg", "IMG-20260526-WA0005.jpg",
-        "IMG-20260617-WA0000.jpg", "IMG-20260621-WA0079.jpg", "IMG-20260624-WA0000.jpg",
-        "IMG-20260207-WA0041.jpg", "IMG-20260207-WA0053.jpg", "IMG-20250510-WA0060.jpg",
+        "IMG-20260205-WA0028.jpg", "IMG-20260526-WA0005.jpg", "IMG-20260617-WA0000.jpg",
+        "IMG-20260621-WA0079.jpg", "IMG-20260624-WA0000.jpg", "IMG-20260207-WA0041.jpg",
+        "IMG-20260207-WA0053.jpg",
     ]),
     ("Sarees", "sarees-rail", [
         # models
@@ -73,21 +81,23 @@ SETS = [
     ]),
     ("Suits and Dresses", "suits-dresses", [
         "IMG-20250917-WA0000.jpg", "IMG-20250921-WA0038.jpg", "IMG-20250921-WA0042.jpg",
-        "IMG-20250921-WA0048.jpg", "IMG-20250929-WA0089.jpg", "IMG-20251106-WA0000.jpg",
+        "IMG-20250921-WA0048.jpg", "IMG-20251106-WA0000.jpg",
         "IMG-20251120-WA0005.jpg", "IMG-20251120-WA0006.jpg", "IMG-20260319-WA0002.jpg",
         "IMG-20260319-WA0003.jpg", "IMG-20260319-WA0004.jpg", "IMG-20260617-WA0001.jpg",
         "IMG-20260624-WA0002.jpg", "IMG-20260624-WA0003.jpg", "IMG-20260702-WA0006.jpg",
         "IMG-20260805-WA0002.jpg", "IMG-20251029-WA0010.jpg", "IMG-20260617-WA0002.jpg",
     ]),
-    ("Blouses", "blouses-rail", []),
-    # Not shot yet. The folder doesn't have to exist — an empty set writes an
-    # empty list to boutique-data.js and script.js hides the rail, so the page
-    # never shows a headed carousel with nothing in it. Drop photos into
-    # ../Boutique Photos/Jewelry, rerun, and the rail appears.
+    # ⚠️ SETS order must match the rail order in boutique.html — Jewelry sits
+    # between Suits & Dresses and Blouses on the page (Kush, 2026-08-31).
     ("Jewelry", "jewelry-rail", []),
+    # An empty ORDER just means "no manual ordering"; filename order is used.
+    # An empty SET (no photos found) writes an empty list to boutique-data.js
+    # and script.js hides that rail, so the page never shows a headed carousel
+    # with nothing in it.
+    ("Blouses", "blouses-rail", []),
     ("Accessories", "accessories-rail", [
         "IMG-20220603-WA0020.jpg", "IMG-20220603-WA0021.jpg", "IMG-20260817-WA0045.jpg",
-        "IMG-20260818-WA0018.jpg", "IMG-20260818-WA0016.jpg", "IMG-20260818-WA0043.jpg",
+        "IMG-20260818-WA0018.jpg", "IMG-20260818-WA0016.jpg",
         "IMG-20260818-WA0071.jpg", "IMG-20260818-WA0044.jpg", "IMG-20260818-WA0048.jpg",
     ]),
 ]
@@ -102,6 +112,12 @@ SETS = [
 # else on this site carries another business's branding — VERIFIED 2026-08-26
 # across all 39 previously-live garment photos.
 EXCLUDE = {
+    # Pulled by Kush 2026-08-31, on look rather than on any mark:
+    "IMG-20250510-WA0060.jpg",   # group shot of five guests — an event photo, not a piece
+    # ⚠️ THIS FILE IS IN TWO SOURCE FOLDERS (Party and Bridal Wear AND Suits and
+    # Dresses, byte-identical) so it was showing TWICE on the page. EXCLUDE is
+    # matched on basename, which is what makes one entry remove both.
+    "IMG-20250929-WA0089.jpg",   # cream/gold lehenga
     # Sarees — vendor "f" logo top-left plus code 88125 bottom-right.
     "IMG-20250929-WA0025.jpg",
     # Jewelry — 🔴 A THIRD KIND OF MARK, AND THE ONE WITH MONEY ATTACHED: several of
@@ -124,6 +140,16 @@ EXCLUDE = {
     "IMG-20260818-WA0024(1).jpg",  # SJNX-CODE-NT-90, badge on the ring
     "IMG-20260818-WA0027.jpg",   # SJNX-CODE-S-105, badge on the ring
     "IMG-20260818-WA0037.jpg",   # SJNX-CODE-B-85, badge on the pendant
+    # 🔴 WA0043 IS THE ONE FRAME WHERE "crop to the clean piece" DOES NOT WORK,
+    # and the reason is geometric, not aesthetic — MEASURED 2026-08-31, don't
+    # re-derive it. The left earring carries a badge ON the piece, so only the
+    # right one is publishable. But (a) the two earrings physically OVERLAP, so
+    # any box holding the right one also holds a slice of the left one's stone,
+    # and (b) the corner badge occupies x>=0.835, y<=0.14, which is exactly the
+    # headroom the right earring's flower cluster needs. Clearing the badge
+    # means top>=0.15, which beheads the cluster. There is no box that is both
+    # clean and whole.
+    "IMG-20260818-WA0043.jpg",   # SJNX-CODE-RB-140, no clean whole-piece crop exists
     "IMG-20260818-WA0065.jpg",   # SJNX-CODE-NT-90 over the model, badge on the ring
     "IMG-20260818-WA0084.jpg",   # SJNX-CODE-D-230, badge on the bangle
 }
@@ -133,12 +159,20 @@ EXCLUDE = {
 # cropped-away region. Each of these removes a supplier code that sits on the
 # backdrop rather than on the piece.
 CROPS = {
-    "IMG-20260817-WA0045.jpg": (0.00, 0.55, 0.55, 1.00),  # keep the lower-left pair
+    # 🔴 THESE ARE RAIL CROPS AND THEY ONLY HAVE ONE JOB: CLEAR THE WATERMARK.
+    # They used to be tuned to also fill a 3/4 TILE, which is a different shape,
+    # and the rail inherited that tighter box — four accessory slides were
+    # showing half a piece. Tile framing now lives in TILE_FILL below; keep
+    # these as loose as the watermark allows. (Kush, 2026-08-31.)
+    "IMG-20260817-WA0045.jpg": (0.00, 0.52, 0.47, 1.00),  # bottom-left pair, both whole
     "IMG-20260818-WA0016.jpg": (0.48, 0.16, 1.00, 0.97),  # keep the right-hand earring
-    "IMG-20260818-WA0018.jpg": (0.12, 0.12, 0.86, 1.00),  # drop code above, badge right
-    "IMG-20260818-WA0043.jpg": (0.10, 0.30, 0.95, 1.00),
-    "IMG-20260818-WA0044.jpg": (0.24, 0.05, 1.00, 1.00),  # drop the "940" scale display
-    "IMG-20260818-WA0048.jpg": (0.00, 0.35, 0.72, 1.00),
+    "IMG-20260818-WA0018.jpg": (0.06, 0.115, 0.94, 1.00),  # drop code above, badge right
+    # ⚠️ WA0048 CANNOT SHOW BOTH EARRINGS — the supplier stamped a badge onto
+    # one of them — so it crops to the ONE clean earring. A whole earring beats
+    # two halves; Kush's call, 2026-08-31. (WA0043 got the same instruction and
+    # FAILED it — see EXCLUDE for why that frame has no clean crop at all.)
+    "IMG-20260818-WA0044.jpg": (0.13, 0.14, 1.00, 1.00),  # drop the "940" scale display
+    "IMG-20260818-WA0048.jpg": (0.10, 0.27, 0.44, 0.82),  # lower-left earring only
     "IMG-20260818-WA0071.jpg": (0.12, 0.30, 0.76, 1.00),  # centre the ring in a 3/4 box
     # Jewelry. Mostly a price in the bottom-right corner, sometimes with a
     # "Shot on OnePlus" camera watermark bottom-left — one crop clears both.
@@ -180,6 +214,20 @@ TILES = {
     "bangles-kadas": ("Accessories", "IMG-20260818-WA0044.jpg"),
 }
 
+# 🔴 TILES IN THIS SET ARE FITTED INSIDE THE 3/4 BOX, NOT CROPPED TO FILL IT.
+# Everything else is a full-length model shot that fills a portrait box
+# happily. These four are wide or square jewellery shots, so ImageOps.fit was
+# slicing the sides off — the oxidized pair lost an earring edge, the kadas
+# lost their top and bottom. Widening the crop is NOT available: every one of
+# them has a supplier code or price hard against the frame (see CROPS), which
+# is why they were tight in the first place.
+#
+# So they letterbox onto TILE_BG instead. The whole piece is visible, centred,
+# with breathing room, and the cream matches the page so the tile reads as a
+# product card rather than a photo with bars. Kush picked this over a blurred
+# fill, 2026-08-31.
+TILE_FILL = {"oxidized", "gold-plated", "bangles-kadas", "earrings"}
+
 # The three headline cards at the top of boutique.html. Separate map because
 # the card box is LANDSCAPE, so these are chosen from the few sources that are
 # wider than tall — a full-length model shot cannot fill a 4/3 box without
@@ -219,6 +267,22 @@ def load(path, crops=CROPS):
         left, top, right, bottom = box
         im = im.crop((int(left * w), int(top * h), int(right * w), int(bottom * h)))
     return im
+
+
+def contain_fill(im, size, margin=TILE_MARGIN, bg=TILE_BG):
+    """Fit the WHOLE image inside `size`, centred, on a flat background.
+
+    The counterpart to ImageOps.fit: that one crops to fill and can cut the
+    subject, this one shrinks to fit and pads. Used for TILE_FILL — see the
+    comment on that set for why those four cannot simply be cropped wider.
+    """
+    canvas = Image.new("RGB", size, bg)
+    inner = (round(size[0] * (1 - 2 * margin)), round(size[1] * (1 - 2 * margin)))
+    fitted = im.copy()
+    fitted.thumbnail(inner, Image.LANCZOS)
+    canvas.paste(fitted, ((size[0] - fitted.width) // 2,
+                          (size[1] - fitted.height) // 2))
+    return canvas
 
 
 def clear_webp(directory):
@@ -262,8 +326,11 @@ def build_rails():
     return manifest, total
 
 
-def build_fixed(mapping, label, size, crops=CROPS):
-    """Build the stable-named images (tiles, covers) into TILE_DST."""
+def build_fixed(mapping, label, size, crops=CROPS, fill=frozenset()):
+    """Build the stable-named images (tiles, covers) into TILE_DST.
+
+    `fill` names the slugs that letterbox instead of crop-to-fill.
+    """
     built = 0
     for slug, (src_dir, basename) in sorted(mapping.items()):
         found = find_all(src_dir)
@@ -271,7 +338,9 @@ def build_fixed(mapping, label, size, crops=CROPS):
         if not path:
             print(f"  ! {label} {slug}: source not found — {src_dir}/{basename}")
             continue
-        im = ImageOps.fit(load(path, crops), size, Image.LANCZOS)
+        src = load(path, crops)
+        im = (contain_fill(src, size) if slug in fill
+              else ImageOps.fit(src, size, Image.LANCZOS))
         im.save(os.path.join(TILE_DST, f"{slug}.webp"), "WEBP",
                 quality=QUALITY, method=6)
         built += 1
@@ -283,7 +352,7 @@ def main():
     manifest, total = build_rails()
 
     clear_webp(TILE_DST)
-    build_fixed(TILES, "tiles", TILE_SIZE)
+    build_fixed(TILES, "tiles", TILE_SIZE, fill=TILE_FILL)
     build_fixed(COVERS, "covers", COVER_SIZE, {**CROPS, **COVER_CROPS})
 
     lines = [
