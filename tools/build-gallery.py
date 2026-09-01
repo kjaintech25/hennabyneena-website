@@ -51,6 +51,15 @@ QUALITY = 78
 # styles.css). Building at that ratio means the browser crops nothing.
 # ⚠️ NOT 3/4 — that is the boutique TILE ratio, and a portrait image in the 4/3
 # card box is centre-cropped hard enough to behead a model.
+#
+# 🔴 THIS SCRIPT HAS NO PER-FILE CROP MAP, AND THAT IS WORTH KEEPING.
+# The sibling script (build-boutique-photos.py) grew one, shared it between the
+# carousel rails and the fixed-ratio tiles, and a box tuned to fill a tile then
+# cut four live carousel slides in half (found 2026-08-31). If a card here ever
+# needs tighter framing, give it its OWN crop keyed on the card slug — never a
+# crop on the shared source, which the numbered rail slides also read.
+# `trim_white` below is safe to share precisely because it only removes white
+# padding, which both a card and a rail slide want gone.
 CARD_SIZE = (900, 675)
 CARDS = {
     "card-bridal":  "InShot_20231029_002952559.jpg",

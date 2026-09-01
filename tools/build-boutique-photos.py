@@ -348,6 +348,104 @@ def build_fixed(mapping, label, size, crops=CROPS, fill=frozenset()):
     return built
 
 
+def report_tile_framing():
+    """Print, every build, how much crop-to-fill would discard from each tile.
+
+    🔴 THIS IS A TABLE, NOT A THRESHOLD, AND THAT IS DELIBERATE — MEASURED
+    2026-08-31. The four tiles in TILE_FILL keep 62%, 68%, 76% and 87% of
+    their source under crop-to-fill; `blouses` keeps 77% and `rings` 82% and
+    both are FINE cropped. So no percentage cutoff reproduces TILE_FILL's
+    membership, and one tuned to try would print a standing false warning
+    every run — which trains everyone to ignore the real one below it.
+
+    What the table is for: a tile with a low keep-% and no FILL marker is the
+    shape of the bug. Read it when you add or reframe a tile.
+    """
+    tw, th = TILE_SIZE
+    target = tw / th
+    rows = []
+    for slug, (src_dir, basename) in TILES.items():
+        found = find_all(src_dir)
+        if basename not in found:
+            continue
+        w, h = load(found[basename]).size
+        a = w / h
+        rows.append((target / a if a > target else a / target, slug))
+    print(f"\n  tile framing (crop-to-fill keeps, {target:.2f} box):")
+    for kept, slug in sorted(rows):
+        mark = "  <- letterboxed (TILE_FILL)" if slug in TILE_FILL else ""
+        print(f"       {slug:15} {kept * 100:5.1f}%{mark}")
+
+
+def audit_shared_crops():
+    """Warn where one CROPS box feeds BOTH a rail and a crop-to-fill tile.
+
+    🔴 THIS IS THE GUARD FOR THE BUG THAT SHIPPED ON 2026-08-26 AND WAS FOUND
+    BY KUSH ON 2026-08-31. A CROPS box tuned to make a 3/4 TILE look right was
+    inherited by the rail, which shows the same built file at its own natural
+    shape — four Accessories slides went live showing half a piece.
+
+    The dangerous combination is precisely: a file in CROPS, used by a rail,
+    AND used by a tile that is NOT in TILE_FILL (i.e. one that still crops to
+    fill). Those are the boxes someone will be tempted to tighten for the tile.
+    A warning, not an assert: the combination is legitimate as long as the box
+    is tuned for the RAIL. It just must never be tuned for the tile.
+    """
+    rail_sources = {}
+    for src_dir, slug, _order in SETS:
+        for name in find_all(src_dir):
+            rail_sources.setdefault(name, []).append(slug)
+
+    shared = []
+    for tile_slug, (_src_dir, basename) in sorted(TILES.items()):
+        if basename in CROPS and basename in rail_sources and tile_slug not in TILE_FILL:
+            shared.append((basename, tile_slug, rail_sources[basename]))
+
+    if shared:
+        print("\n  ⚠️  CROPS boxes shared by a rail and a crop-to-fill tile:")
+        for basename, tile_slug, rails in shared:
+            print(f"       {basename} -> rail {'/'.join(rails)} + tile '{tile_slug}'")
+        print("       Tune these for the RAIL (clear the watermark, stay loose).")
+        print("       If the tile needs tighter framing, add it to TILE_FILL —")
+        print("       never tighten CROPS to fix a tile. See TILE_FILL's comment.")
+    return shared
+
+
+def audit_fill_tiles():
+    """Assert every TILE_FILL tile actually letterboxed.
+
+    Cheap proof that the letterbox path ran: a filled tile has TILE_BG in all
+    four corners, a crop-to-fill one almost never does. Catches a slug being
+    dropped from TILE_FILL, or renamed in TILES without being renamed here.
+
+    ⚠️ COMPARED WITH A TOLERANCE, NOT FOR EQUALITY. WebP is lossy, so the flat
+    cream comes back a point or two off what was written — (250,246,241) for a
+    (250,247,241) fill. An exact check fails on all four tiles every run.
+    """
+    tol = 4
+    bad = []
+    for slug in sorted(TILE_FILL):
+        path = os.path.join(TILE_DST, f"{slug}.webp")
+        if not os.path.exists(path):
+            bad.append(f"{slug}: no tile built (is it still a key in TILES?)")
+            continue
+        im = Image.open(path).convert("RGB")
+        w, h = im.size
+        corners = [im.getpixel(c) for c in ((1, 1), (w - 2, 1), (1, h - 2), (w - 2, h - 2))]
+        off = [px for px in corners
+               if any(abs(a - b) > tol for a, b in zip(px, TILE_BG))]
+        if off:
+            bad.append(f"{slug}: corner(s) {off} not within {tol} of TILE_BG "
+                       f"{TILE_BG} — did it letterbox?")
+    if bad:
+        print("\n  ! TILE_FILL check failed:")
+        for line in bad:
+            print(f"       {line}")
+    else:
+        print(f"fill tiles         {len(TILE_FILL):>3} verified letterboxed onto {TILE_BG}")
+    return bad
+
+
 def main():
     manifest, total = build_rails()
 
@@ -367,6 +465,10 @@ def main():
     lines.append("};")
     with open(os.path.join(SITE, "boutique-data.js"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
+
+    audit_fill_tiles()
+    report_tile_framing()
+    audit_shared_crops()
 
     print(f"\ntotal {total} rail photos -> wrote boutique-data.js")
 

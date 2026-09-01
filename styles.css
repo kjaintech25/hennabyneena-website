@@ -941,7 +941,16 @@ button { font-family: inherit; cursor: pointer; background: none; border: none; 
    box. The height is fixed and the width follows the image's own proportions,
    so nothing is ever cropped — a tall photo just makes a narrow slide and a
    wide one makes a wide slide. The previous fixed 400x420 box with
-   object-fit: cover was cutting up to half the image off tall shots. */
+   object-fit: cover was cutting up to half the image off tall shots.
+
+   🔴 SO "THE CAROUSEL IS CROPPING MY PHOTO" IS NEVER TRUE OF THIS CSS.
+   Nothing here crops. A carousel slide that looks cut off was BUILT that way:
+   go to `CROPS` in tools/build-boutique-photos.py (boutique rails) or the
+   source photo itself (gallery rails). Editing this rule cannot fix it and
+   will break the shape-follows-photo behaviour. VERIFIED 2026-08-31 after
+   four boutique Accessories slides shipped showing half a piece — the cause
+   was a crop box in the build script, tuned to fill a TILE, that the rail
+   inherited. */
 .portfolio-swiper .swiper-slide {
   width: auto;
   height: auto;
@@ -2178,6 +2187,13 @@ img {
 
 .boutique-tile:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
 
+/* ⚠️ SOME TILES LETTERBOX ONTO CREAM ON PURPOSE — DO NOT "FIX" THE MARGIN.
+   The four jewellery tiles in `TILE_FILL` (tools/build-boutique-photos.py) are
+   built as the whole piece centred on #faf7f1, which is --color-surface, so
+   the padding is invisible against the page. It is there because those sources
+   are wide or square and this box is 3/4 portrait: cropping them to fill cut
+   the pieces in half, and their supplier watermarks make a looser crop
+   impossible. A tile that looks like it "has a border" is working correctly. */
 .boutique-tile-media {
   aspect-ratio: 3 / 4;
   overflow: clip;
